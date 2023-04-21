@@ -85,6 +85,40 @@ def logout():
     return redirect(url_for('Usuario.show_login'))
 
 #ADMIN_VIEW-------------------------------------------------------------------
-#Berni
+#Obtiene todos los usuarios
+@Usuario.route('/Admin/usuarios', methods=['GET'])
+@login_required
+def show_usuarios():
+    users = User.query.all()
+    roles = Role.query.all()
+    return render_template('usuarios.html', name = 'Usuarios', type = 'lateral', users = users, roles = roles)
+
+#Modifica el rango de un usuario
+@Usuario.route('/Admin/usuarios_update', methods=['POST'])
+@login_required
+def range_usuarios():
+    user = User.query.get(int(request.form.get('usuario_id')))
+    role = int(request.form.get('rango'))
+    new_role = Role.query.get(role)
+    
+    #Comprueba que no sea el mismo rol, sino, lo modifica
+    if new_role != user.roles[0]:
+        user.roles.remove(user.roles[0])
+        user.roles.append(new_role)
+        db.session.commit()
+    
+    return redirect(url_for('Usuario.show_usuarios'))
+
+#Elimina usuarios
+@Usuario.route('/DeleteUser/<int:id>', methods=['POST'])
+@login_required
+def deleteuser(id):
+    user = User.query.get(id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('El usuario ha sido eliminado correctamente')
+    return redirect(url_for('Usuario.show_usuarios'))
+    
+
     
     

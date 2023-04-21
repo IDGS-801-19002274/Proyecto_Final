@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+<table class="table is-fullwidth">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rango</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in users %}
+        <tr>
+            <td><label class="label">{{ usuario.name }}</label></td>
+            <td><label class="label">{{ usuario.email }}</label></td>
+            <td>
+                <div class="select">
+                <form method="post" action="/Admin/usuarios_update">
+                    <select name="rango">
+                        {% for role in roles %}
+                        <option value="{{role.id}}" {% if usuario.roles[0].id == role.id %}selected{% endif %}>{{role.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </td>
+            <td>
+                    <input type="hidden" name="usuario_id" value="{{ usuario.id }}">
+                    <button class="button is-link" type="submit">Guardar</button>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="/DeleteUser/{{usuario.id}}">
+                    <button class="button is-danger" type="submit">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+  
+{%endblock%}
