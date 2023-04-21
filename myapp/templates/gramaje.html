@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+<table class="table is-striped is-fullwidth">
+    <thead>
+      <tr>
+        <th>Unidad Mini</th>
+        <th>Unidad Larga</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for gramaje in gramajes %}
+        <tr>
+            <td>{{gramaje.uni_mini}}</td>
+            <td>{{gramaje.uni_larga}}</td>
+          </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <form method="POST" action="/Admin/addgramaje">
+          <td><input class="input" type="text" name="uni_mini" placeholder="Unidad Mini"></td>
+          <td><input class="input" type="text" name="uni_larga" placeholder="Unidad Larga"></td>
+          <td><button type="submit" class="button is-primary">Agregar</button></td>
+        </form>
+      </tr>
+    </tfoot>
+  </table>
+{%endblock%}

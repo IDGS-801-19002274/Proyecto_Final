@@ -1,0 +1,57 @@
+<header class="header">
+  <nav class="navbar is-orange">
+    <div class="navbar-brand">
+      <a class="navbar-item image logo" href="/" style="padding: 0;">
+        <img src="{{logo}}" alt="Logo">
+      </a>
+    </div>
+    <div id="navbarMenuHeroA" class="navbar-menu" style="margin-left: 0.5rem;">
+      <div class="navbar-start">
+        <a class="navbar-item {{'active' if name == 'Inicio' else ''}}" href="/">Zamoranos</a>
+        <a class="navbar-item {{'active' if name == 'Productos' else ''}}" href="#">Productos</a>
+        <a class="navbar-item {{'active' if name == 'Nosotros' else ''}}" href="#">Nosotros</a>
+        <a class="navbar-item {{'active' if name == 'Contacto' else ''}}" href="#">Contacto</a>
+      </div>
+      <div class="navbar-end">
+        {% if current_user.is_authenticated %}
+          {% if current_user.roles[0].name == 'admin' or current_user.roles[0].name == 'visor'%}
+          <a class="navbar-item" href="/Admin/productos">Panel de Administración</a>
+          {% endif %}
+        <div class="dropdown is-right is-hoverable">
+          <div class="dropdown-trigger">
+            <label class="button is-orange has-text-weight-bold header-profile" aria-haspopup="true" aria-controls="dropdown-menu4">
+              <span>{{current_user.name}}</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </label>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+            <div class="dropdown-content">
+                <p class="has-text-black" style="padding-left: 0.5rem;">{{current_user.email}}</p>
+              <hr class="dropdown-divider">
+              <a href="#" class="dropdown-item">
+                Carrito de Compra
+              </a>
+              <a class="dropdown-item">
+                Mis compras
+              </a>
+              <hr class="dropdown-divider">
+              <a href="/Usuario/logout" class="dropdown-item">
+                Cerrar Sesión
+              </a>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-light" href="/Usuario/login">Iniciar sesión</a>
+            <a class="button is-soft-green" href="/Usuario/register">Registrarse</a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+</header>

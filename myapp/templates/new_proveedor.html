@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+<form method="POST" action="/Admin/add_proveedor" enctype="multipart/form-data">
+    <div class="columns">
+      <div class="column">
+        <div class="field">
+          <label class="label">Nombre del proveedor</label>
+          <div class="control">
+            <input class="input" name="nombre" type="text" placeholder="Nombre del proveedor">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Imagen</label>
+          <div class="control">
+            <input id="img-input" class="input" type="file" name="file" placeholder="URL de la imagen">
+          </div>
+        </div>
+        <figure class="image is-4by3">
+          <img src="{{def_img}}" alt="Proveedor" id="img-preview">
+        </figure>
+      </div>
+      <div class="column">
+        <h2 class="title is-4">Datos generales</h2>
+        <div class="field">
+          <label class="label">Descripción</label>
+          <div class="control">
+            <textarea name="descripcion" class="textarea no-resize" placeholder="Descripción"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Dirección</label>
+          <div class="control">
+            <input name="direccion" class="input" type="text" placeholder="Dirección">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Teléfono</label>
+          <div class="control">
+            <input name="telefono" class="input" type="text" placeholder="Teléfono">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Dueño</label>
+          <div class="control">
+            <input name="jefe" class="input" type="text" placeholder="Dueño">
+          </div>
+        </div>
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-green has-text-weight-bold">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  
+  <script>
+    const imgInput = document.getElementById('img-input');
+    const imgPreview = document.getElementById('img-preview');
+
+    imgInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      
+      if (file) {
+        const reader = new FileReader();
+        
+        reader.addEventListener('load', (event) => {
+          imgPreview.src = event.target.result;
+        });
+        
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+{%endblock%}

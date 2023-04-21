@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+<form method="POST" action="/Admin/add_ingrediente">
+    <div class="field">
+      <label class="label">Nombre</label>
+      <div class="control">
+        <input class="input" name="nombre" type="text" placeholder="Ingresa el nombre del ingrediente">
+      </div>
+    </div>
+  
+    <div class="field">
+      <label class="label">Proveedor</label>
+      <div class="select is-fullwidth">
+        <select name="provider">
+          <option value="">Selecciona un proveedor</option>
+          {% for provider in providers %}
+          <option value="{{provider.id}}">{{provider.nombre}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Medida</label>
+      <div class="select is-fullwidth">
+        <select name="gramaje">
+          <option value="">Selecciona la medida del producto</option>
+          {% for grama in gramaje %}
+          <option value="{{grama.id}}">{{grama.uni_larga}} ({{grama.uni_mini}})</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  
+    <div class="field">
+      <label class="label">Precio</label>
+      <div class="control">
+        <input class="input" name="precio" type="number" placeholder="Ingresa el precio del ingrediente">
+      </div>
+    </div>
+  
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-green has-text-weight-bold" type="submit">Agregar</button>
+      </div>
+      <div class="control">
+        <a class="button is-danger has-text-weight-bold" href="/Admin/ingredientes">Cancelar</a>
+      </div>
+    </div>
+  </form>
+{%endblock%}

@@ -1,0 +1,29 @@
+<div class="lateral-bar" style="min-height: 100vh; max-height: 100vh">
+    <header>
+        <a class="sidebar-header image logo" href="/">
+            <img src="{{logo2}}" alt="Logo">
+        </a>
+    </header>
+    <hr>
+    <div class="lbody">
+        <h1 class="has-text-weight-bold has-text-white" >Administrador</h1>
+        <hr>
+        <ul>
+            <li class="{{'active' if name == 'Perfil' else ''}}"><a href="/Admin/perfil">Perfil</a></li>
+            <li class="{{'active' if name == 'Usuarios' else ''}}"><a href="/Admin/usuarios">Usuarios</a></li>
+            <li class="{{'active' if name == 'Productos' else ''}}"><a href="/Admin/productos">Productos</a></li>
+            <li class="{{'active' if name == 'Proveedores' else ''}}"><a href="/Admin/proveedores">Proveedores</a></li>
+            <li class="{{'active' if name == 'Ingredientes' else ''}}"><a href="/Admin/ingredientes">Ingredientes</a></li>
+            <li class="{{'active' if name == 'Pedidos' else ''}}"><a href="/Admin/pedidos">Pedidos</a></li>
+            <li class="{{'active' if name == 'Log' else ''}}"><a href="/Admin/log">Log</a></li>
+            <li class="{{'active' if name == 'Gramaje' else ''}}"><a href="/Admin/gramaje">Gramaje</a></li>
+        </ul>
+    </div>
+    <footer class="footer">
+		<div class="has-text-centered">
+			<p>
+				Hecho con <3 Zamoranos S.A. de C.V.
+			</p>
+		</div>
+	</footer>
+</div>

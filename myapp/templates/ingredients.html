@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+{% include 'alert.html' %}
+<table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Stock</th>
+        <th>Proveedor</th>
+        <th>Costo</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for ingredient in ingredients %}
+      <tr>
+        <td>{{ingredient.nombre}}</td>
+        <td>{{(ingredient.stock / 1000)}} {{ingredient.gramaje}}</td>
+        <td>{{ingredient.proveedor.nombre}}</td>
+        <td>${{ingredient.precio}}</td>
+        <td><button class="nostyle has-text-orange" onclick="activate({{ingredient.id}})"><span class="material-icons g-icon g-is-2">add</span></button></td>
+        <td><a class="has-text-warning-dark" href="/Ingrediente/{{ingredient.id}}"><span class="material-icons g-icon g-is-2">edit</span></a></td>
+        <td><p class="has-text-danger"><span class="material-icons g-icon g-is-2">sentiment_dissatisfied</span></i></p></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a class="button is-orange is-circle is-large is-add-button" href="/Admin/add_ingrediente"><span class="material-icons g-icon g-is-3">add</span></a>
+
+<script>
+  const noti = document.getElementById('alert')
+  const ids = document.getElementById('noti_id')
+
+  function activate(id){
+    noti.classList.add('alert-active')
+    ids.value = id
+  }
+</script>
+{%endblock%}

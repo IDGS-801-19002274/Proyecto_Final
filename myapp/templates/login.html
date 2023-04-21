@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{%block nh_content%}
+<div class="columns is-centered has-bg bg-02" style="min-height: 100vh; display: flex; align-items: center;">
+    <div class="column is-half is-4 lr-form">
+      <h1 class="title has-text-white">Iniciar sesión</h1>
+      <form method="post">
+        <div class="field">
+          <label class="label has-text-white">Correo electrónico</label>
+          <div class="control">
+            <input class="input" type="email" placeholder="Tu correo electrónico" name="email">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="label has-text-white has-text-weight-bold">Contraseña</label>
+          <div class="control">
+            <input class="input" type="password" placeholder="Tu contraseña" name="password">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="checkbox has-text-white has-text-weight-bold">
+            <input type="checkbox" name="remember_me">
+            Recuérdame
+          </label>
+        </div>
+
+        <div class="field">
+          <div class="control">
+            <button class="button is-orange is-outlined has-text-weight-bold">Iniciar sesión</button>
+          </div>
+        </div>
+      </form> <br>
+
+      <p class="has-text-white has-text-weight-bold">¿Aún no tienes cuenta? <a href="/Usuario/register">Regístrate</a></p>
+    </div>
+</div>
+{%endblock%}

@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{%block nh_content%}
+<div class="columns is-centered has-bg bg-03" style="min-height: 100vh; display: flex; align-items: center;">
+    <div class="column is-half is-5 lr-form">
+      <h1 class="title has-text-white">Registro</h1>
+      <form method="post">
+
+        <div class="field">
+            <label class="label has-text-white">Nombre completo</label>
+            <div class="control">
+              <input class="input" type="text" placeholder="Tu nombre" name="name">
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label has-text-white">Correo electrónico</label>
+            <div class="control">
+              <input class="input" type="email" placeholder="Tu correo electrónico" name="email">
+            </div>
+          </div>
+
+          <div class="columns">
+            <div class="field column">
+              <label class="label has-text-white">Direccion</label>
+              <div class="control">
+                <input class="input" type="text" placeholder="Tu Direccion" name="direccion">
+              </div>
+            </div>
+  
+            <div class="field column">
+              <label class="label has-text-white">Telefono</label>
+              <div class="control">
+                <input class="input" type="text" placeholder="Tu telefono" name="telefono">
+              </div>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="field column">
+              <label class="label has-text-white">Codigo Postal</label>
+              <div class="control">
+                <input class="input" type="number" placeholder="Tu Codigo Postal" name="cp">
+              </div>
+            </div>
+
+            <div class="field column">
+              <label class="label has-text-white has-text-weight-bold">Contraseña</label>
+              <div class="control">
+                <input class="input" type="password" placeholder="Tu contraseña" name="password">
+              </div>
+            </div>
+          </div>
+
+        <div class="field">
+          <div class="control">
+            <button class="button is-orange is-outlined has-text-weight-bold">Registrar</button>
+          </div>
+        </div>
+      </form> <br>
+
+      <p class="has-text-white has-text-weight-bold">¿Ya tienes cuenta? <a href="/Usuario/login">Iniciar Sesión</a></p>
+    </div>
+</div>
+{%endblock%}

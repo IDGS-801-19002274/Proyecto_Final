@@ -1,0 +1,51 @@
+<div class="alert" id="alert">
+    <div class="work_space">
+        <div class="box">
+            <h2 class="subtitle">Agregar Stock</h2>
+            <div class="field is-grouped">
+              <div class="control">
+                <button class="button is-danger" onclick="add(-10)">10 -</button>
+              </div>
+              <div class="control">
+                <button class="button is-danger" onclick="add(-1)">-</button>
+              </div>
+              <div class="control">
+                <label class="label" id="noti_label">0</label>
+              </div>
+              <div class="control">
+                <button class="button is-success" onclick="add(1)">+</button>
+              </div>
+              <div class="control">
+                <button class="button is-success" onclick="add(10)">+ 10</button>
+              </div>
+            </div>
+            <form method="POST" action="/Admin/add_ingrediente_stock">
+                <input type="number" name="ammount" id="noti_input" hidden>
+                <input type="number" name="id" id="noti_id" hidden>
+                <button id="submit" disabled class="button is-orange" type="submit">Agregar</button>
+                <a class="button is-danger" href="/Admin/ingredientes">Cancelar</a>
+            </form>
+          </div>
+    </div>
+</div>
+
+<script>
+    var agregado = 0;
+
+    const label = document.getElementById('noti_label')
+    const input = document.getElementById('noti_input')
+    const btn = document.getElementById('submit')
+
+    function add(times){
+        agregado += times;
+        if (agregado <= 0){
+            agregado = 0
+            btn.disabled = true
+        }
+        else{
+            btn.disabled = false
+        }
+        label.textContent = agregado
+        input.value = agregado
+    }
+</script>

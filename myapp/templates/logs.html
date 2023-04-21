@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+<table class="table is-fullwidth">
+    <thead>
+      <tr>
+        <th>Logs del sistema</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for n in range(25) %}
+      <tr>
+        <td><a>Descripcion de Log #{{n}}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{%endblock%}

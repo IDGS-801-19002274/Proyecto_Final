@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+<section>
+    <div class="columns">
+      <div class="column is-7">
+        <div class="columns">
+          <div class="column is-5">
+            <figure class="image is-256x256 force-square">
+              <img src="{{product.url_photo}}" alt="Producto">
+            </figure>
+            <p class="has-text-centered">{{product.url_photo}}</p>
+          </div>
+          <div class="column is-9">
+            <h1 class="title is-4">{{product.nombre}}</h1>
+            <p >{{product.descripcion_corta}}</p>
+            <form>
+              <p class="is-size-5">Precio normal:$</p>
+              <input class="input" type="number" value="{{product.precio_menudeo}}" name="precio"
+              style="max-width: 25%;">
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <h1 class="title is-4">Descripción</h1>
+        <p>{{product.descripcion_larga}}</p>
+        <div class="box">
+          <h2 class="subtitle">Agregar producto (Actual: {{product.inventario[0].stock}})</h2>
+          <div class="field is-grouped">
+            <div class="control">
+              <button class="button is-danger" onclick="add(-10)">10 -</button>
+            </div>
+            <div class="control">
+              <button class="button is-danger" onclick="add(-1)">-</button>
+            </div>
+            <div class="control">
+              <label class="label" id="add_label">0</label>
+            </div>
+            <div class="control">
+              <button class="button is-success" onclick="add(1)">+</button>
+            </div>
+            <div class="control">
+              <button class="button is-success" onclick="add(10)">+ 10</button>
+            </div>
+          </div>
+          <form method="POST" action="/Producto_stock/{{product.id}}">
+            <input type="number" value="0" id="add_input" name="added" hidden>
+            <input type="hidden" name="receta" value="{{jreceta}}">
+            <button class="button is-orange" id="submit" disabled>Agregar</button>
+            <a class="button is-danger" href="/Producto/{{product.id}}">Reiniciar</a>
+          </form>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <h1 class="title is-4">Ingredientes</h1>
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>Ingrediente</th>
+          <th>Cantidad</th>
+          <th>Disponible</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ingrediente in receta %}
+        <tr>
+          <td>{{ingrediente.ingrediente}}</td>
+          <td>{{ingrediente.cantidad}} {{ingrediente.gramaje_m}}</td>
+          <td>{{(ingrediente.disponible/1000)}} {{ingrediente.gramaje_l}} </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  
+  <script>
+    var agregado = 0;
+
+    const label = document.getElementById('add_label')
+    const input = document.getElementById('add_input')
+    const btn = document.getElementById('submit')
+
+    function add(times){
+        agregado += times;
+        if (agregado <= 0){
+            agregado = 0
+            btn.disabled = true
+        }
+        else{
+            btn.disabled = false
+        }
+        label.textContent = agregado
+        input.value = agregado
+    }
+  </script>
+{%endblock%}

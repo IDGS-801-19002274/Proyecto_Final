@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/css.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <title>{{name}}</title>
+</head>
+<body>
+    <!--Si type es 'header', dibuja primero el navbar y debajo de este el contenido de la pagina-->
+    {% if type == 'header' %}
+        <div>
+            {% include 'header.html' %}
+        </div>
+        <main class="content">
+            {%block normal_content%}
+            {%endblock%}
+        </main>
+
+    <!--Si type es 'lateral', dibuja una barra lateral a la izquierda, util para el panel de administrador
+        a la derecha sera el contenido de la pagina-->
+    {% elif type == 'lateral' %}
+        <div class="columns bg-01 admin">
+            <div class="column is-one-fifth" style="background-color: white;">
+                {% include 'lateral.html' %}
+            </div>
+            <div class="column content">
+                <div class="section">
+                    <h1>{{name}}</h1>
+                    <hr>
+                    {%block l_content%}
+                    {%endblock%}
+                </div>
+            </div>
+        </div>
+    
+    <!--Si type no es ninguno de los anteriores, dibuja un header fixed que unicamente contiene el logo
+    y toda la pantalla sera la pagina dibujada, util para secciones como el login y register-->
+    {% else %}
+    <div>
+        {% include 'header-fixed.html' %}
+    </div>
+    <main class="content">
+        {%block nh_content%}
+        {%endblock%}
+    </main>
+    {% endif %}
+</body>
+</html>

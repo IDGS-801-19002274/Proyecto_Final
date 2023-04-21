@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+{% if ing == 0 %}
+<form method="POST" action="/Admin/add_productos">
+    <div class="field">
+      <label class="title">Ingredientes</label>
+      <div class="control">
+        <br>
+        <h4 class="subtitle is-5">¿Cuántos ingredientes lleva la receta?</h4>
+        <input class="input is-medium" type="number" name="ingre" placeholder="Número de ingredientes" min="1" required>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <button class="button is-green has-text-weight-bold" type="submit">Registrar</button>
+      </div>
+    </div>
+  </form>
+{% else %}
+<section>
+    <div class="columns">
+      <div class="column is-6">
+        <div class="columns">
+          <div class="column">
+            <figure class="image is-4by3">
+              <img src="{{def_img}}" alt="Producto" id="img-preview">
+            </figure>
+            <p class="has-text-centered" id="img-url">url de imagen</p>
+          </div>
+          <div class="column">
+  <form method="POST", action="/Admin/add_producto" enctype="multipart/form-data">
+            <input name="name" type="text" class="title is-4" placeholder="Nombre del Producto">
+            <textarea name="descripcion_corta" class="no-resize textarea" placeholder="Descripcion Corta"></textarea>
+            <p class="is-size-5">Precio normal:</p>$<input name="precio_menudeo" type="number">
+            <p class="is-size-5">Precio mayoreo:</p>$<input name="precio_mayoreo" type="number">
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <h1 class="title is-4">Descripción</h1>
+        <textarea name="descripcion_larga" class="no-resize textarea" placeholder="Descripcion Larga"></textarea>
+        <h1 class="title is-5">Imagen</h1>
+        <input type="file" id="img-input" name="file" enctype="multipart/form-data">
+        <input type="text" name="indexes" value="{{ing}}" hidden>
+      </div>
+    </div>
+    <hr>
+    <h1 class="title is-4">Ingredientes</h1>
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>Ingrediente</th>
+          <th>Cantidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for n in range(ing) %}
+        <tr>
+          <td>
+            <div class="select">
+              <select name="ingredient_{{n}}">
+                <option value="">Selecciona un ingrediente</option>
+                {% for ingredient in ingredients %}
+                <option value="{{ingredient.id}}">{{ingredient.nombre}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </td>
+          <td><input type="number" name="can_ing_{{n}}">gr/ml</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+<button type="submit" class="button is-green is-circle is-large is-add-button" href="/Admin/add_producto"><span class="material-icons g-icon g-is-3">save</span></button>
+
+  </form>
+  </section>
+
+
+  
+  <script>
+    const imgInput = document.getElementById('img-input');
+    const imgPreview = document.getElementById('img-preview');
+
+    imgInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      
+      if (file) {
+        const reader = new FileReader();
+        
+        reader.addEventListener('load', (event) => {
+          imgPreview.src = event.target.result;
+        });
+        
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+
+{% endif %}
+{%endblock%}
