@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, current_app as app, redirect, url_for
+from flask import Blueprint, render_template, request, current_app as app, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from flask_login import login_required, current_user
 from my_decorator import role_required
@@ -11,7 +11,7 @@ Administrador = Blueprint('Administrador', __name__)
 
 @Administrador.route('/Admin/perfil', methods=['GET'])
 @login_required
-@role_required('admin', 'mod')
+@role_required('admin', 'visor')
 def get_profile_data():
     return render_template('admin-profile.html', name = 'Perfil', type = 'lateral')
 
@@ -45,34 +45,51 @@ def show_add_provider():
 @login_required
 @role_required('admin')
 def add_provider():
-    nombre = request.form.get('nombre')
-    des = request.form.get('descripcion')
-    dire = request.form.get('direccion')
-    tel = request.form.get('telefono')
-    jefe = request.form.get('jefe')
-    file = request.files['file']
-    
-    filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    
-    prov = Proveedor(
-        nombre = nombre,
-        url_photo = ('../static/img/upload/' + filename),
-        descripcion = des,
-        direccion = dire,
-        telefono = tel,
-        jefe = jefe
-    )
-    
-    db.session.add(prov)
-    db.session.commit()
-    return redirect(url_for('Administrador.get_providers'))
+    try:
+        nombre = request.form.get('nombre')
+        des = request.form.get('descripcion')
+        dire = request.form.get('direccion')
+        tel = request.form.get('telefono')
+        jefe = request.form.get('jefe')
+        file = request.files['file']
+
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        prov = Proveedor(
+            nombre = nombre,
+            url_photo = ('../static/img/upload/' + filename),
+            descripcion = des,
+            direccion = dire,
+            telefono = tel,
+            jefe = jefe
+        )
+
+        db.session.add(prov)
+        db.session.commit()
+
+        return redirect(url_for('Administrador.get_providers'))
+
+    except Exception as e:
+        db.session.rollback()
+        flash('Ocurrió un error al agregar el proveedor. Verifique que haya ingresado todos los campos correctamente.')
+        return redirect(url_for('Administrador.get_providers'))
 
 #PEDIDOS
+#Muestra todos los pedidos
 @Administrador.route('/Admin/pedidos', methods=['GET'])
 @login_required
+@role_required('admin', 'visor')
 def get_orders():
     return render_template('orders.html', name = 'Pedidos', type = 'lateral')
+
+#Muestra un pedido en especifico
+@Administrador.route('/Pedido/<int:id>', methods=['GET'])
+@login_required
+@role_required('admin', 'visor')
+def get_order(id):
+    
+    return render_template('order.html', name = 'Pedidos', type = 'lateral')
 
 #LOG
 @Administrador.route('/Admin/log', methods=['GET'])

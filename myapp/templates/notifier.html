@@ -1,0 +1,15 @@
+<div class="notifier ">
+<h1 class="title has-text-white">Notificación</h1>
+<hr>
+<p class="has-text-white has-text-weight-bold">{{ get_flashed_messages()[0] }}</p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const notifier = document.querySelector(".notifier");
+        notifier.classList.add("notifier-active");
+        setTimeout(function() {
+            notifier.classList.remove("notifier-active");
+        }, 5000);
+    });
+</script>

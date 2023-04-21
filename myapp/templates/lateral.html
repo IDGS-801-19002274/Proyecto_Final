@@ -9,14 +9,19 @@
         <h1 class="has-text-weight-bold has-text-white" >Administrador</h1>
         <hr>
         <ul>
+            {% if current_user.roles[0].name == 'admin' or current_user.roles[0].name == 'visor'%}
             <li class="{{'active' if name == 'Perfil' else ''}}"><a href="/Admin/perfil">Perfil</a></li>
-            <li class="{{'active' if name == 'Usuarios' else ''}}"><a href="/Admin/usuarios">Usuarios</a></li>
             <li class="{{'active' if name == 'Productos' else ''}}"><a href="/Admin/productos">Productos</a></li>
-            <li class="{{'active' if name == 'Proveedores' else ''}}"><a href="/Admin/proveedores">Proveedores</a></li>
             <li class="{{'active' if name == 'Ingredientes' else ''}}"><a href="/Admin/ingredientes">Ingredientes</a></li>
             <li class="{{'active' if name == 'Pedidos' else ''}}"><a href="/Admin/pedidos">Pedidos</a></li>
+            {% endif %}
+
+            {% if current_user.roles[0].name == 'admin'%}
+            <li class="{{'active' if name == 'Usuarios' else ''}}"><a href="/Admin/usuarios">Usuarios</a></li>
+            <li class="{{'active' if name == 'Proveedores' else ''}}"><a href="/Admin/proveedores">Proveedores</a></li>
             <li class="{{'active' if name == 'Log' else ''}}"><a href="/Admin/log">Log</a></li>
             <li class="{{'active' if name == 'Gramaje' else ''}}"><a href="/Admin/gramaje">Gramaje</a></li>
+            {% endif %}
         </ul>
     </div>
     <footer class="footer">

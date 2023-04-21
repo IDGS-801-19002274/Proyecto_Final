@@ -11,12 +11,15 @@
     <title>{{name}}</title>
 </head>
 <body>
+    {% if get_flashed_messages() %}
+        {% include 'notifier.html' %}
+    {% endif %}
     <!--Si type es 'header', dibuja primero el navbar y debajo de este el contenido de la pagina-->
     {% if type == 'header' %}
         <div>
             {% include 'header.html' %}
         </div>
-        <main class="content">
+        <main class="content has-bg bg-01 bwhite">
             {%block normal_content%}
             {%endblock%}
         </main>
@@ -34,7 +37,7 @@
                     <hr>
                     {%block l_content%}
                     {%endblock%}
-                </div>
+                  </div>
             </div>
         </div>
     

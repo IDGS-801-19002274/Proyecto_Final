@@ -50,32 +50,35 @@ def register():
     dire = request.form.get('direccion')
     cp = request.form.get('cp')
     
-    #Consultamos si existe un usuario ya registrado con ese email
-    user = User.query.filter_by(email=email).first()
-    
-    if user: #Si se encontro un usuario, redireccionamos de regreso a la pagina de registro
-        flash('Ese correo electronico ya existe')
+    try:
+        #Consultamos si existe un usuario ya registrado con ese email
+        user = User.query.filter_by(email=email).first()
 
-        #Redireccionamos a signup
+        if user: #Si se encontro un usuario, redireccionamos de regreso a la pagina de registro
+            flash('Ese correo electronico ya existe')
+            return redirect(url_for('Usuario.show_register'))
+
+        #Si no existe, creamos un nuevo usuario con sus datos.
+        #Hacemos un hash a la contraseña para protegerla.
+        new_user = User(
+            name = name,
+            email = email,
+            password = generate_password_hash(passw, method='sha256'),
+            direccion = dire,
+            telefono = tel,
+            cp = cp)
+
+        client_role = Role.query.filter_by(name='cliente').first()
+        new_user.roles.append(client_role)
+
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return redirect(url_for('Usuario.show_login'))
+    
+    except:
+        flash('Hubo un error al crear el usuario. Inténtalo de nuevo más tarde.')
         return redirect(url_for('Usuario.show_register'))
-    
-    #Si no existe, creamos un nuevo usuario con sus datos.
-    #Hacemos un hash a la contraseña para protegerla.
-    new_user = User(
-        name = name,
-        email = email,
-        password = generate_password_hash(passw, method='sha256'),
-        direccion = dire,
-        telefono = tel,
-        cp = cp)
-    
-    client_role = Role.query.filter_by(name='cliente').first()
-    new_user.roles.append(client_role)
-    
-    db.session.add(new_user)
-    db.session.commit()
-    
-    return redirect(url_for('Usuario.show_login'))
 
 #LOGOUT
 @Usuario.route('/Usuario/logout', methods=['GET'])
@@ -106,6 +109,8 @@ def range_usuarios():
         user.roles.remove(user.roles[0])
         user.roles.append(new_role)
         db.session.commit()
+    else:
+        flash('No se han realizado cambios')
     
     return redirect(url_for('Usuario.show_usuarios'))
 
