@@ -1,5 +1,20 @@
 {% extends "layout.html" %}
 
 {%block normal_content%}
-<h1>{{name}}</h1>
+<section class="hero is-fullheight has-bg bg-0{{rand}} bgstatic">
+    <div class="hero-body">
+      <div class="container has-text-centered">
+        <img src="{{logo}}" alt="Tu logo">
+      </div>
+    </div>
+    <div class="hero-foot">
+        <nav class="tabs is-boxed is-fullwidth">
+          <div class="container">
+            <a class="button starter has-text-white nostyle is-pulled-right">Conócenos <span class="material-icons g-icon g-is-3">arrow_forward_ios</span></a>
+          </div>
+        </nav>
+      </div>
+  </section>
+
+  {%include 'footer.html'%}
 {%endblock%}

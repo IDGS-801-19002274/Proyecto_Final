@@ -1,0 +1,37 @@
+
+{% extends "layout.html" %}
+
+{%block normal_content%}
+<section class="section" style="margin-top: 5rem; min-height : 60vh">
+    <div class="container">
+      <h2 class="title is-2">Contacto</h2>
+      <hr>
+      <div class="columns">
+        <div class="column is-half">
+          <form>  
+            <div class="field">
+              <label class="label">Mensaje</label>
+              <div class="control">
+                <textarea class="textarea" placeholder="Escribe aquí tu mensaje"></textarea>
+              </div>
+            </div>
+  
+            <div class="field">
+              <div class="control">
+                <button class="button is-primary" type="submit">Enviar</button>
+              </div>
+            </div>
+          </form>
+        </div>
+  
+        <div class="column">
+          <p>Si tienes alguna duda o comentario, no dudes en ponerte en contacto con nosotros. Puedes hacerlo a través del siguiente formulario o escribiéndonos directamente a nuestro correo electrónico.</p>
+          <br>
+          <p><strong>Correo electrónico:</strong> zamoranos@zamoranos.com</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+{%include 'footer.html'%}
+{%endblock%}

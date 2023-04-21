@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{%block normal_content%}
+<section class="section" style="padding-top: 7rem;">
+    <div class="container">
+      <div class="columns is-variable is-8">
+        <div class="column is-three-quarters">
+          <div class="product">
+            <img src="{{product.url_photo}}" alt="Imagen del producto">
+            <hr>
+            <p>{{product.descripcion_larga}}</p>
+          </div>
+        </div>
+        <div class="column is-one-quarter" style="background-color: white; height : fit-content">
+          <div class="product-sidebar">
+            <h2 class="title">{{product.nombre}}</h2>
+            <p> {{product.descripcion_corta}} </p>
+            <h3> ${{product.precio_mayoreo}} </h3>
+            <a class="button is-primary is-fullwidth" href="#">Agregar al carrito</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section">
+    <div class="container">
+      <h2 class="title is-2">Productos recomendados</h2>
+      <div class="columns is-multiline is-mobile">
+        <!-- Aquí irían las tarjetas de productos recomendados -->
+        {% for object in suggest %}
+        <a class="column desavaled" href="/TiendaProducto/{{object.id}}">
+            <figure class="desaval">
+              <img class="image is-256x256" src="{{object.url_photo}}" alt="{{object.nombre}}">
+            </figure>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  
+{%include 'footer.html'%}
+{%endblock%}
