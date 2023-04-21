@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+<div class="container">
+    <div class="columns is-multiline is-centered">
+      {% for provider in providers %}
+      <a class="column desavaled" href="/Proveedor/{{provider.id}}">
+        <figure class="desaval">
+          <img class="image is-256x256" src="{{provider.url_photo}}" alt="{{provider.name}}">
+        </figure>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  <a class="button is-orange is-circle is-large is-add-button" href="/Admin/add_proveedor"><span class="material-icons g-icon g-is-3">add</span></a>
+  
+{%endblock%}
