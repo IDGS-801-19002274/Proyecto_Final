@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {%block l_content%}
+{% include 'delete_element_confirm.html' %}
 <form method="POST" action="/Ingrediente/{{ingrediente.id}}">
     <div class="field">
       <label class="label">Nombre</label>
@@ -33,7 +34,10 @@
         <button class="button is-green has-text-weight-bold" type="submit">Agregar</button>
       </div>
       <div class="control">
-        <a class="button is-danger has-text-weight-bold" href="/Admin/ingredientes">Cancelar</a>
+        <a class="button is-orange has-text-weight-bold" href="/Admin/ingredientes">Cancelar</a>
+      </div>
+      <div class="control">
+        <a class="button is-danger has-text-weight-bold" onclick="activate()">Eliminar Ingrediente</a>
       </div>
     </div>
   </form>

@@ -27,7 +27,8 @@ def get_Producto(id):
     product = Producto.query.filter_by(id=id).first()
     receta = convert_Objects(product.receta)
     jreceta = json.dumps(receta)
-    return render_template('product_data.html', name = 'Producto', type = 'lateral', product = product, receta = receta, jreceta = jreceta)
+    ingredientes = Ingrediente.query.all()
+    return render_template('product_data.html', name = 'Producto', type = 'lateral', product = product, receta = receta, jreceta = jreceta, ingredientes = ingredientes, ing = len(receta))
 
 #Vista que permite agregar productos
 @Productos.route('/Admin/add_productos', methods=['GET', 'POST'])
@@ -79,7 +80,51 @@ def add_producto():
         db.session.rollback()
         flash('Hubo un error al agregar el producto: verifique que los datos que ingresó son correctos o que no dejó ningún campo vacío')
         return redirect(url_for('Productos.get_Productos'))
+   
+#Edita info general de productos
+@Productos.route('/Editproduct/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def edit_product(id):
+    try:
+        producto = Producto.query.get(id)
     
+        producto.descripcion_corta = request.form.get('descripcion_corta')
+        producto.descripcion_larga = request.form.get('descripcion_larga')
+        producto.nombre = request.form.get('name')
+        producto.precio_menudeo = request.form.get('precio_menudeo')
+        
+        if request.files['file'].filename:
+            file = request.files['file']
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            producto.url_photo = ('../static/img/upload/' + filename)
+        
+        db.session.commit()
+        flash('Se han guardado con éxito los cambios!')
+        
+    except TypeError:
+        flash('Se ha producido un error')
+    return redirect(url_for('Productos.get_Productos'))
+    
+#Edita la receta
+@Productos.route('/Editrecipe/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def edit_recipe(id):
+    producto = Producto.query.get(id)
+    new_receta = convert_Inputs(request.form)
+    if producto.receta == new_receta:
+        flash ('No se han ralizado cambios en la receta')
+    else:
+        try:
+            producto.receta = new_receta
+            db.session.commit()
+            flash ('La receta ha sido cambiada con exito')
+        except:
+            flash('Ha ocurrido un error')
+        
+    return redirect(url_for('Productos.get_Productos'))
     
 #INGREDIENTES-------------------------------------------------------
 #Muestra todos los ingredientes
@@ -159,7 +204,7 @@ def add_ingrediente_stock():
 def get_show_ingrediente(id):
     ingrediente = Ingrediente.query.get(id)
     providers = Proveedor.query.all()
-    return render_template('edit_ingredient.html', name = 'Editar Ingrediente', type = 'lateral', providers = providers, ingrediente = ingrediente)
+    return render_template('edit_ingredient.html', name = 'Editar Ingrediente', type = 'lateral', providers = providers, ingrediente = ingrediente, delete_route = ('/DeleteIngrediente/' + str(ingrediente.id)))
 
 #Edita ingredientes
 @Productos.route('/Ingrediente/<id>', methods=['POST'])
@@ -191,6 +236,18 @@ def edit_ingrediente(id):
     ingrediente.precio = precio
     
     db.session.commit()
+    
+    return redirect(url_for('Productos.get_Ingredientes'))
+
+#Elimina los ingredientes
+@Productos.route('/DeleteIngrediente/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def delete_ingrediente(id):
+    ingrediente = Ingrediente.query.get(id)
+    db.session.delete(ingrediente)
+    db.session.commit()
+    flash('Se ha eliminado el elemento, asegurese de editar las recetas que puedan contener este elemento')
     
     return redirect(url_for('Productos.get_Ingredientes'))
 
@@ -230,20 +287,23 @@ def gramaje_add():
 @login_required
 @role_required('admin', 'visor')
 def add_producto_stock(id):
-    prod = Producto.query.get(id)
-    stock = float(request.form.get('added'))
-    rec = request.form.get('receta')
-    receta = json.loads(rec)
-    
-    for ingrediente in receta:
-        total_add = ingrediente['cantidad'] * stock
-        if (ingrediente['disponible'] - total_add) <= 0:
-            flash('Demasiado stock, poco inventario, intenta de nuevo')
-            return redirect('/Producto/'+str(id))
-        ingr = Ingrediente.query.get(ingrediente['id'])
-        ingr.inventario[0].stock -= total_add
-    
-    prod.inventario[0].stock += stock
-    
-    db.session.commit()
+    try:
+        prod = Producto.query.get(id)
+        stock = float(request.form.get('added'))
+        rec = request.form.get('receta')
+        receta = json.loads(rec)
+        
+        for ingrediente in receta:
+            total_add = ingrediente['cantidad'] * stock
+            if (ingrediente['disponible'] - total_add) < 0:
+                flash('Demasiado stock, poco inventario, intenta de nuevo')
+                return redirect('/Producto/'+str(id))
+            ingr = Ingrediente.query.get(ingrediente['id'])
+            ingr.inventario[0].stock -= total_add
+        
+        prod.inventario[0].stock += stock
+        
+        db.session.commit()
+    except:
+        flash('Ha ocurrido un error, verifica la receta que no contenga elementos eliminados')
     return redirect(url_for('Productos.get_Productos'))

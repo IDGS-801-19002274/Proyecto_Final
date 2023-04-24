@@ -68,6 +68,7 @@ class Pedido(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   productos = db.Column(db.Text, nullable=False)    
   cliente_id = db.Column(db.Integer, nullable=False)
+  status = db.Column(db.String(50), nullable=False)
 
 class Facturas(db.Model):
   __tablename__ = 'facturas'
@@ -97,3 +98,10 @@ class InventarioProductos(db.Model):
     producto_id = db.Column(db.Integer, ForeignKey('productos.id'), primary_key=True)
     stock = db.Column(db.Double)
     producto = relationship('Producto', uselist=False, backref='inventario')
+
+class ComentariosCancelados(db.Model):
+    __tablename__ = 'comentarios_cancelados'
+    id = db.Column(db.Integer, primary_key=True)
+    id_pedido = db.Column(db.Integer, db.ForeignKey('pedidos.id'), unique=True, nullable=False)
+    comentario = db.Column(db.Text, nullable=False)
+    pedido = relationship('Pedido', backref='comentario_cancelado')

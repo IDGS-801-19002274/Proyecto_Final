@@ -2,25 +2,30 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, c
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
 
-from config import config
+from config import config, OpenAIConfig
 from models import db, User
 
-import os, random
+import os, random, openai
+import Administrador.prompts as prompts
 
 from Administrador.routes import Administrador
 from Productos.routes import Productos
 from Tienda.routes import Tienda
 from Usuario.routes import Usuario
 
+from Productos.converter import generate_notification_by_IA
+
 app = Flask(__name__)
 login_manager = LoginManager(app)
 app.config.from_object(config['development'])
 app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/img/upload')
+openai.api_key = OpenAIConfig.API_KEY
 
 #----------------------RUTAS-------------------------------------------------------------------------------------------------------------------------------------#
 
 @app.route('/', methods=['GET'])
 def home():
+    
     return  redirect(url_for('Tienda.index'))
 
 @app.errorhandler(404)

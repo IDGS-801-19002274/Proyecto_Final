@@ -30,9 +30,9 @@
             <div class="dropdown-content">
                 <p class="has-text-black" style="padding-left: 0.5rem;">{{current_user.email}}</p>
               <hr class="dropdown-divider">
-              <a href="/Tienda/carrito" class="dropdown-item">
+              <button href="/Tienda/carrito" class="dropdown-item button" id="cart-link" onclick="goToCart()">
                 Carrito de Compra
-              </a>
+              </button>
               <hr class="dropdown-divider">
               <a href="/Usuario/logout" class="dropdown-item">
                 Cerrar Sesión
@@ -52,3 +52,16 @@
     </div>
   </nav>
 </header>
+
+<script>
+  function goToCart() {
+    // Obtiene el valor de cartItems del LocalStorage
+    var cartItems = localStorage.getItem('cartItems');
+
+    // Construye la URL de la petición con el valor de cartItems
+    var url = '/Tienda/carrito?cartItems=' + encodeURIComponent(cartItems);
+
+    // Redirige a la página de carrito con la URL construida
+    window.location.href = url;
+}
+</script>

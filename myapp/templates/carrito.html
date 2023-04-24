@@ -2,122 +2,167 @@
 
 {%block normal_content%}
 <section class="section" style="margin-top: 3rem;">
-    <div class="container">
+    <div class="container" style="min-height: 100vh;">
+      {% if cartItems %}
       <h1 class="title">Carrito de Compra</h1>
       <hr>
       <div class="columns">
         <div class="column">
+
+          {% for item in cartItems %}
           <div class="box">
             <article class="media">
               <div class="media-left">
                 <figure class="image is-128x128">
-                  <img src="https://via.placeholder.com/128x128" alt="Chocolate">
+                  <img src="{{item.product.url_photo}}" alt="Chocolate">
                 </figure>
               </div>
               <div class="media-content">
-                <div class="">
+                <div>
                   <p>
-                    <strong>Chocolate con Leche</strong><br>
-                    Delicioso chocolate con leche de alta calidad.<br>
-                    Precio: $5.00
+                    <strong>{{item.product.nombre}} ({{item.quantity}} Pz)</strong><br>
+                    {{item.product.descripcion_corta}}<br>
+                    Precio: ${{item.product.precio_menudeo}}
                   </p>
                 </div>
                 <nav class="level">
-                  <div class="level-left">
-                    <a class="level-item">
-                      <span class="icon is-small"><i class="fas fa-minus"></i></span>
-                    </a>
-                    <div class="level-item">
-                      <p>1</p>
-                    </div>
-                    <a class="level-item">
-                      <span class="icon is-small"><i class="fas fa-plus"></i></span>
-                    </a>
-                  </div>
+                  <h4 style="margin-right: 1rem;">Subtotal: ${{(item.quantity * item.product.precio_menudeo)}}</h4>
                 </nav>
               </div>
             </article>
           </div>
-          <div class="box">
-            <article class="media">
-              <div class="media-left">
-                <figure class="image is-128x128">
-                  <img src="https://via.placeholder.com/128x128" alt="Caramelo">
-                </figure>
-              </div>
-              <div class="media-content">
-                <div class="">
-                  <p>
-                    <strong>Caramelos de Frutas</strong><br>
-                    Deliciosos caramelos con sabor a frutas.<br>
-                    Precio: $3.50
-                  </p>
-                </div>
-                <nav class="level">
-                  <div class="level-left">
-                    <a class="level-item">
-                      <span class="icon is-small"><i class="fas fa-minus"></i></span>
-                    </a>
-                    <div class="level-item">
-                      <p>2</p>
-                    </div>
-                    <a class="level-item">
-                      <span class="icon is-small"><i class="fas fa-plus"></i></span>
-                    </a>
-                  </div>
-                </nav>
-              </div>
-            </article>
-          </div>
+          {% endfor %}
+
         </div>
         <div class="column is-one-third">
-          <div class="box">
-            <h2 class="subtitle">Resumen del Pedido</h2>
-            <table class="table is-fullwidth">
-              <tbody>
-                <tr>
-                  <th>Producto</th>
-                  <td>Chocolate con Leche</td>
-                </tr>
-                <tr>
-                  <th>Precio</th>
-                  <td>$5.00</td>
-                </tr>
-                <tr>
-                  <th>Cantidad</th>
-                  <td>1</td>
-                </tr>
-                <tr>
-                  <th>Subtotal</th>
-                  <td>$5.00</td>
-                </tr>
-                <tr>
-                    <th>Producto</th>
-                    <td>Caramelo de frutas</td>
-                  </tr>
-                  <tr>
-                    <th>Precio</th>
-                    <td>$5.00</td>
-                  </tr>
-                  <tr>
-                    <th>Cantidad</th>
-                    <td>1</td>
-                  </tr>
-                  <tr>
-                    <th>Subtotal</th>
-                    <td>$5.00</td>
-                  </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                    <td>Total:</td>
-                    <td>$10.0</td>
-                </tr>
-              </tfoot>
-            </table>
+          <div class="box pay">
+            <h1 class="title is-4 has-text-weight-bold">Resumen de compras</h1>
+            <div class="">
+              <div class="columns is-mobile is-gapless">
+                <div class="column">
+                  <p class="is-size-6 has-text-weight-bold">Productos ({{cartItems|length}})</p>
+                </div>
+              </div>
+              <hr>
+              <div class="columns is-mobile is-gapless">
+                <div class="column">
+                  <p class="is-size-6 has-text-weight-bold">Total</p>
+                </div>
+                <div class="column has-text-right">
+                  <p class="is-size-6 has-text-weight-bold">${{total}}</p>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="buttons is-centered">
+              <button class="button is-large is-primary" onclick="activatePayment()">Continuar compra</button>
+            </div>
+
+            <div class="pay-desactivated" id="pay">
+              <hr>
+              <!-- Aquí agregamos el formulario para la simulación del pago -->
+                <div class="">
+                  <label class="label">Número de tarjeta</label>
+                  <div class="control">
+                    <input class="input" id="numero-tarjeta" type="text" placeholder="**** **** **** ****" name="card_number" pattern="\d{4}\s?\d{4}\s?\d{4}\s?\d{4}" maxlength="19" oninput="formatCardNumber(this)">
+                  </div>
+                </div> <br>
+              
+                <div>
+                  <label class="label">Fecha de expiración</label>
+                  <div class="columns is-mobile is-gapless">
+                    <div class="column">
+                      <div class="control">
+                        <input class="input" id="expiracion" type="text" placeholder="MM/AA" name="exp_date" pattern="\d{2}/?\d{0,2}" maxlength="5" oninput="formatExpDate(this)">
+                      </div>
+                    </div>
+                    <div class="column">
+                      <div class="control">
+                        <input class="input" id="cvc" type="text" placeholder="CVC" name="cvc" maxlength="3" oninput="formatCVC()">
+                      </div>
+                    </div>
+                  </div>
+                </div> <br>
+              
+              <form action="/pago" method="POST" id="form-pedido">
+                <div class="">
+                  <div class="control">
+                    <input type="hidden" name="elements" value="{{cartItems|length}}">
+                    {% for item in cartItems %}
+                    <input type="hidden" name="prod_id_{{(loop.index - 1)}}" value="{{item.product.id}}">
+                    <input type="hidden" name="quan_{{(loop.index - 1)}}" value="{{item.quantity}}">
+                    {% endfor %}
+                    <button disabled class="button is-primary" type="submit" id="boton-comprar">Pagar</button>
+                    <p class="button is-danger" onclick="cancelPayment()">Cancelar</p>
+                  </div>
+                </div>
+              </form>              
+            </div>
+
           </div>
         </div>
       </div>
+      {% else %}
+      <section class="hero is-fullheight">
+        <div class="hero-body">
+          <div class="container has-text-centered">
+            <h1 class="title">
+              Parece que no tienes nada agregado a tu carrito!
+            </h1>
+          </div>
+        </div>
+      </section>
+      {% endif %}
     </div>
 </section>  
+
+<script>
+  const paybutton = document.getElementById('boton-comprar')
+  function activatePayment() {
+    const payDiv = document.getElementById("pay");
+    payDiv.classList.remove("pay-desactivated");
+    payDiv.classList.add("pay-activated");
+  }
+
+  function cancelPayment() {
+    const payDiv = document.getElementById("pay");
+    payDiv.classList.remove("pay-activated");
+    payDiv.classList.add("pay-desactivated");
+  }
+
+  function formatCardNumber(cardNumberInput) {
+    let value = cardNumberInput.value;
+    value = value.replace(/\D/g, ''); // Remover todos los caracteres no numéricos
+    value = value.substring(0, 19); // Limitar el número de caracteres a 19
+    value = value.replace(/(\d{4})(?=\d)/g, '$1 '); // Agregar un espacio cada cuatro caracteres
+    cardNumberInput.value = value;
+    validar()
+  }
+  
+  function formatExpDate(expDateInput) {
+    let value = expDateInput.value;
+    value = value.replace(/\D/g, ''); // Remover todos los caracteres no numéricos
+    value = value.substring(0, 5); // Limitar el número de caracteres a 5
+    value = value.replace(/(\d{2})(?=\d{2})/, '$1/'); // Agregar una barra después de los primeros dos caracteres
+    expDateInput.value = value;
+    validar()
+  }
+
+  function formatCVC(){
+    validar()
+  }
+
+  function validar(){
+    let card = document.getElementById('numero-tarjeta').value.length
+    let date = document.getElementById('expiracion').value.length
+    let cvc = document.getElementById('cvc').value.length
+
+    if (card==19 && date==5 && cvc==3){
+      paybutton.disabled = false;
+    }
+  }
+</script>
+
+{%include 'footer.html'%} 
+
 {%endblock%}

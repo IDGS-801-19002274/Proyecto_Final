@@ -98,7 +98,7 @@ input{font-weight: bold;}
 }
 
 .has-text-green{
-    color: var(--green);
+    color: var(--green) !important;
 }
 .is-green{
   color: white !important;
@@ -215,18 +215,20 @@ nav.is-orange-transparent .navbar-item:hover{color: white !important; font-size:
 .alert{
     position: fixed;
     min-width : 100vh;
-    height : 0vh;
+    height : 0%;
     left: 0; top: 0;
     backdrop-filter: blur(3px);
     z-index: 999999;
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity: 0;
 }
 
 .alert-active{
     height: 100vh;
     left: 0; right: 0;
+    opacity: 1 !important;
 }
 
 .alert .work_space{
@@ -263,6 +265,49 @@ nav.is-orange-transparent .navbar-item:hover{color: white !important; font-size:
 .notifier-active{
     transform: translateX(0);
     opacity: 1;
+}
+
+.loader-page{
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    min-width : 100%;
+    height : 100vh;
+    left: 0; top: 0;
+    z-index: 999999999999;
+    background-color: aliceblue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader-page h1{font-size: 5rem; letter-spacing: 0.1em;-webkit-text-stroke: 4px black;}
+.loader-active{
+    opacity: 1;
+    overflow: hidden;
+}
+
+.pay {
+    position : fixed;
+    overflow-y: scroll;
+    max-height: 70%;
+}
+
+.pay-desactivated {
+    height: 0;
+    padding: 0;
+    visibility: hidden;
+    opacity: 0;
+    overflow: hidden;
+    transition: all .3s;
+}
+
+.pay-activated {
+    height: auto;
+    padding: 10px 20px;
+    visibility: visible;
+    opacity: 1;
+    overflow: visible;
+    transition: all .3s;
 }
 
 @keyframes logo-animation {

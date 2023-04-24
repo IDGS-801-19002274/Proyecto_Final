@@ -2,29 +2,28 @@
 
 {%block l_content%}
 <section>
+<form method="POST" action="/Editproduct/{{product.id}}" enctype="multipart/form-data">
     <div class="columns">
       <div class="column is-7">
         <div class="columns">
           <div class="column is-5">
             <figure class="image is-256x256 force-square">
-              <img src="{{product.url_photo}}" alt="Producto">
+              <img src="{{product.url_photo}}" id="img-preview" alt="Producto">
+              <p class="has-text-centered">{{product.url_photo}}</p>
+            <input type="file" id="img-input" name="file" enctype="multipart/form-data">
             </figure>
-            <p class="has-text-centered">{{product.url_photo}}</p>
           </div>
-          <div class="column is-9">
-            <h1 class="title is-4">{{product.nombre}}</h1>
-            <p >{{product.descripcion_corta}}</p>
-            <form>
-              <p class="is-size-5">Precio normal:$</p>
-              <input class="input" type="number" value="{{product.precio_menudeo}}" name="precio"
-              style="max-width: 25%;">
-            </form>
+          <div class="column is-7">
+            <input name="name" type="text" class="title is-4" placeholder="Nombre del Producto" value="{{product.nombre}}">
+            <textarea name="descripcion_corta" class="no-resize textarea" placeholder="Descripcion Corta">{{product.descripcion_corta}}</textarea>
+              <p class="is-size-5">Precio normal:</p>$<input name="precio_menudeo" value="{{product.precio_menudeo}}" type="number">
           </div>
         </div>
       </div>
       <div class="column">
         <h1 class="title is-4">Descripción</h1>
-        <p>{{product.descripcion_larga}}</p>
+        <textarea name="descripcion_larga" class="no-resize textarea" placeholder="Descripcion Larga">{{product.descripcion_larga}}</textarea>
+        <br>
         <div class="box">
           <h2 class="subtitle">Agregar producto (Actual: {{product.inventario[0].stock}})</h2>
           <div class="field is-grouped">
@@ -44,6 +43,8 @@
               <button class="button is-success" onclick="add(10)">+ 10</button>
             </div>
           </div>
+          <button type="submit" class="button is-green is-circle is-large is-add-button" href="/Admin/add_producto"><span class="material-icons g-icon g-is-3">save</span></button>
+</form>
           <form method="POST" action="/Producto_stock/{{product.id}}">
             <input type="number" value="0" id="add_input" name="added" hidden>
             <input type="hidden" name="receta" value="{{jreceta}}">
@@ -55,24 +56,38 @@
     </div>
     <hr>
     <h1 class="title is-4">Ingredientes</h1>
-    <table class="table is-fullwidth">
-      <thead>
-        <tr>
-          <th>Ingrediente</th>
-          <th>Cantidad</th>
-          <th>Disponible</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for ingrediente in receta %}
-        <tr>
-          <td>{{ingrediente.ingrediente}}</td>
-          <td>{{ingrediente.cantidad}} {{ingrediente.gramaje_m}}</td>
-          <td>{{(ingrediente.disponible/1000)}} {{ingrediente.gramaje_l}} </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      <table class="table is-fullwidth">
+        <thead>
+          <tr>
+            <th>Ingrediente</th>
+            <th>Cantidad</th>
+            <th>Disponible</th>
+          </tr>
+        </thead>
+        <tbody>
+          <form action="/Editrecipe/{{product.id}}" method="POST">
+            <input type="hidden" name="indexes" value="{{ing}}">
+          {% for ingrediente in receta %}
+          <tr>
+            <td>
+              <div class="select">
+                <select name="ingredient_{{loop.index - 1}}">
+                  {% for actingrediente in ingredientes %}
+                  <option value="{{ actingrediente.id }}" {% if ingrediente.id == actingrediente.id %} selected {% endif %}>{{ actingrediente.nombre }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </td>
+            <td><input type="number" name="can_ing_{{loop.index - 1}}" value="{{ingrediente.cantidad}}">{{ingrediente.gramaje_m}}</td>
+            <td>{{(ingrediente.disponible/1000)}} {{ingrediente.gramaje_l}} </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="submit" class="button is-orange">Guardar Receta</button>
+      </form>
+
+</form>
   </section>
   
   <script>
@@ -94,5 +109,22 @@
         label.textContent = agregado
         input.value = agregado
     }
+
+    const imgInput = document.getElementById('img-input');
+    const imgPreview = document.getElementById('img-preview');
+
+    imgInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      
+      if (file) {
+        const reader = new FileReader();
+        
+        reader.addEventListener('load', (event) => {
+          imgPreview.src = event.target.result;
+        });
+        
+        reader.readAsDataURL(file);
+      }
+    });
   </script>
 {%endblock%}

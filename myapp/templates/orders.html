@@ -1,18 +1,41 @@
 {% extends "layout.html" %}
 
 {%block l_content%}
-<div class="card">
-    <div class="card-content">
-      <p class="title is-4">Pedido #1</p>
-      <p class="subtitle is-6">Para: nombre</p>
-      <p>Dirección: Dirección de ejemplo #123</p>
-      <hr>
-      <div class="is-flex is-align-items-center">
-        <h3 class="mr-auto">Estado: Pendiente</h3>
-        <div class="buttons">
-          <a class="has-text-orange ml-auto" href="/Pedido/1"><span class="material-icons g-icon g-is-3">arrow_forward_ios</span></a>
-        </div>
+<form class="mb-4" method="POST">
+  <div class="field has-addons">
+    <div class="control is-expanded">
+      <div class="select is-fullwidth">
+        <select name="status">
+          <option value="">Todos los pedidos</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="enviado">Enviado</option>
+          <option value="entregado">Entregado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+    </div>
+    <div class="control">
+      <button type="submit" class="button is-orange">Filtrar</button>
+    </div>
+  </div>
+</form>
+{% for pedido in pedidos %}
+<div class="card" style="margin-bottom: 2rem;">
+  <div class="card-content">
+    <div class="is-flex is-align-items-center">
+      <p class="title is-4 mr-2">Pedido #{{pedido.pedido.id}}</p>
+      <p class="subtitle is-6">Para: {{pedido.cliente.name}}</p>
+    </div>
+    <p>Dirección: {{pedido.cliente.direccion}}</p>
+    <hr>
+    <div class="is-flex is-align-items-center">
+      <h3 class="mr-auto">Estado: {{pedido.pedido.status}}</h3>
+      <div class="buttons">
+        <a class="has-text-orange ml-auto" href="/Pedido/{{pedido.pedido.id}}"><span class="material-icons g-icon g-is-3">arrow_forward_ios</span></a>
       </div>
     </div>
   </div>
+</div>
+
+{% endfor %}
 {%endblock%}

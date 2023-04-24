@@ -1,0 +1,23 @@
+<div class="alert" id="alert">
+    <div class="workspace">
+        <div class="box">
+            <h2 class="subtitle">Eliminar Elemento</h2>
+            <div class="field is-grouped">
+              
+            </div>
+            <form method="POST" action="{{delete_route}}">
+                <p class="has-text-weight-bold">¿Estás seguro que deseas eliminar este elemento?</p>
+                <button id="submit" class="button is-orange" type="submit">Eliminar</button>
+                <a class="button is-danger" onclick="location.reload(); return false">Cancelar</a>
+            </form>
+          </div>
+    </div>
+    </div>
+</div>
+
+<script>
+    const noti = document.getElementById('alert')
+    function activate(){
+        noti.classList.add('alert-active')
+      }
+</script>

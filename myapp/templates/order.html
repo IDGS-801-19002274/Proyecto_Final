@@ -3,23 +3,42 @@
 {%block l_content%}
 <section class="section card">
     <div class="container">
-      <h1 class="title">Pedido #31 - Ermelindo Bustamante</h1>
+      <h1 class="title">Pedido #{{pedido.id}} - {{cliente.name}}</h1>
       <hr>
       <div class="">
-          <p>Choongos Zamoranos: 5pz</p>
-          <p>Morenitos: 5pz</p>
-          <p>Dulce de leche: 5pz</p>
-          <p>Gaznate: 5pz</p>
-          <h3>Total:</h3> <h2>$150.0</h2>
+        {% for producto in productos %}
+        <p>{{producto.producto.nombre}} ({{producto.cantidad}}pz)</p>
+        <p>$ {{(producto.producto.precio_menudeo * producto.cantidad)}}</p>
+        {% endfor %}
+
+          <h3>Total:</h3> <h2>${{total}}</h2>
           <hr>
       </div>
+      {% if pedido.status == 'pendiente' or pedido.status == 'enviado' %}
       <h2 class="subtitle">Estado del pedido:</h2>
       <div class="buttons has-addons">
-        <button class="button is-warning is-selected">Pendiente</button>
-        <button class="button ">Enviado</button>
-        <button class="button ">Entregado</button>
-        <button class="button ">Cancelado</button>
+        <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
+          <input type="hidden" name="status" value="pendiente">
+          <button class="button {{'is-warning' if pedido.status == 'pendiente' else ''}}">Pendiente</button>
+        </form>
+        <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
+          <input type="hidden" name="status" value="enviado">
+          <button class="button {{'is-info' if pedido.status == 'enviado' else ''}}">Enviado</button>
+        </form>
+        <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id"> 
+          <input type="hidden" name="status" value="entregado">
+          <button class="button">Entregado</button>
+        </form>
+        <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
+          <input type="hidden" name="status" value="cancelado">
+          <button class="button">Cancelado</button>
+        </form>
       </div>
+      {% elif pedido.status == 'entregado' %}
+      <h1 class="subtitle has-text-green">Pedido Entregado y Completado</h1>
+      {% else %}
+      <h1 class="subtitle has-text-danger">Pedido Cancelado</h1>
+      {% endif %}
     </div>
   </section>
 {%endblock%}

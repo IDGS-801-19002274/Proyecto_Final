@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{%block nh_content%}
+<section class="hero is-success is-fullheight">
+    <div class="hero-body">
+      <div class="container has-text-centered">
+        <h1 class="title">
+          Pedido realizado con éxito
+        </h1>
+        <h2 class="subtitle">
+          Ahora puede ir consultando el estado de su pedido en la sección "Mis pedidos" :)
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = "{{ url_for('Tienda.index') }}";
+    }, 2000);
+
+    window.onload = function() {
+        localStorage.removeItem('cartItems');
+      }
+  </script>
+{%endblock%}

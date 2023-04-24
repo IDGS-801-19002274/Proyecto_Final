@@ -5,11 +5,11 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const notifier = document.querySelector(".notifier");
-        notifier.classList.add("notifier-active");
-        setTimeout(function() {
-            notifier.classList.remove("notifier-active");
-        }, 5000);
-    });
-</script>
+    window.onload = function() {
+      const notifier = document.querySelector(".notifier");
+      notifier.classList.add("notifier-active");
+      setTimeout(function() {
+        notifier.classList.remove("notifier-active");
+      }, 5000);
+    };
+  </script>

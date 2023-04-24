@@ -1,4 +1,5 @@
 import os
+import openai_secret_manager
 
 class DevelopmentConfig() :
     DEBUG = True
@@ -14,3 +15,12 @@ class Config(object):
 config = {
     'development' : DevelopmentConfig
 }
+
+class OpenAIConfig:
+    # Configuración de credenciales de OpenAI
+    try:
+        API_KEY = "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"
+    except Exception as e:
+        print("Error al obtener las credenciales de OpenAI:", e)
+
+#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

@@ -15,8 +15,19 @@
           <div class="product-sidebar">
             <h2 class="title">{{product.nombre}}</h2>
             <p> {{product.descripcion_corta}} </p>
-            <h3> ${{product.precio_mayoreo}} </h3>
-            <a class="button is-primary is-fullwidth" href="#">Agregar al carrito</a>
+            <h3> ${{product.precio_menudeo}} </h3>
+            <div class="field has-addons">
+              <p class="control">
+                <button class="button is-danger is-outlined" onclick="increase(-1)">-</button>
+              </p>
+              <p class="control" style="max-width: 30%;">
+                <input class="input" type="number" min="1" value="1" id="quantity">
+              </p>
+              <p class="control">
+                <button class="button is-success is-outlined" onclick="increase(1)">+</button>
+              </p>
+            </div>
+            <button class="button is-primary is-fullwidth" onclick="add_to_cart({{product.id}})">Agregar al carrito</button>
           </div>
         </div>
       </div>
@@ -40,4 +51,38 @@
   </section>
   
 {%include 'footer.html'%}
+
+<script>
+  const quatro = document.getElementById('quantity');
+  var quan = 1
+
+  function increase(inc){
+    quan += inc;
+    if (quan <= 1){
+      quan = 1;
+    }
+    quatro.value = quan;
+  }
+
+  function add_to_cart(id){
+    var cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    var cartItemIndex = -1;
+    var i;
+    for (i = 0; i < cartItems.length; i++) {
+      if (cartItems[i].product_id === id) {
+        cartItemIndex = i;
+        break;
+      }
+    }
+    if (cartItemIndex === -1) {
+      cartItems.push({product_id: id, quantity: quan});
+    } else {
+      cartItems[cartItemIndex].quantity += quan;
+    }
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    quan = 1;
+    quatro.value = quan;
+    window.location.href = '/agregar_carrito';
+  }
+</script>
 {%endblock%}
