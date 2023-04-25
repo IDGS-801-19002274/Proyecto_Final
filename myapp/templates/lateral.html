@@ -6,7 +6,7 @@
     </header>
     <hr>
     <div class="lbody">
-        <h1 class="has-text-weight-bold has-text-white" >Administrador</h1>
+        <h1 class="has-text-weight-bold has-text-white" >{{current_user.roles[0].name}}</h1>
         <hr>
         <ul>
             {% if current_user.roles[0].name == 'admin' or current_user.roles[0].name == 'visor'%}

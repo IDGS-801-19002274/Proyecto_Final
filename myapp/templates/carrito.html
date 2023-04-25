@@ -27,6 +27,7 @@
                 </div>
                 <nav class="level">
                   <h4 style="margin-right: 1rem;">Subtotal: ${{(item.quantity * item.product.precio_menudeo)}}</h4>
+                  <button class="delete-item button is-danger is-outlined is-small" onclick="delete_carrito_item({{item.product.id}})">Eliminar</button>
                 </nav>
               </div>
             </article>
@@ -161,6 +162,16 @@
       paybutton.disabled = false;
     }
   }
+
+  function delete_carrito_item(id){
+    let cartItems = JSON.parse(localStorage.getItem('cartItems'));
+    cartItems = cartItems.filter(item => item.product_id != id);
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    var cart_Items = localStorage.getItem('cartItems');
+    var url = '/Tienda/carrito?cartItems=' + encodeURIComponent(cart_Items);
+    window.location.href = url;
+  }
+  
 </script>
 
 {%include 'footer.html'%} 

@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {%block l_content%}
+{%include 'delete_element_confirm.html'%}
 <section>
 <form method="POST" action="/Editproduct/{{product.id}}" enctype="multipart/form-data">
     <div class="columns">
@@ -23,37 +24,40 @@
       <div class="column">
         <h1 class="title is-4">Descripción</h1>
         <textarea name="descripcion_larga" class="no-resize textarea" placeholder="Descripcion Larga">{{product.descripcion_larga}}</textarea>
+        <button type="submit" class="button is-green is-circle is-large is-add-button"><span class="material-icons g-icon g-is-3">save</span></button>
         <br>
-        <div class="box">
-          <h2 class="subtitle">Agregar producto (Actual: {{product.inventario[0].stock}})</h2>
-          <div class="field is-grouped">
-            <div class="control">
-              <button class="button is-danger" onclick="add(-10)">10 -</button>
-            </div>
-            <div class="control">
-              <button class="button is-danger" onclick="add(-1)">-</button>
-            </div>
-            <div class="control">
-              <label class="label" id="add_label">0</label>
-            </div>
-            <div class="control">
-              <button class="button is-success" onclick="add(1)">+</button>
-            </div>
-            <div class="control">
-              <button class="button is-success" onclick="add(10)">+ 10</button>
-            </div>
-          </div>
-          <button type="submit" class="button is-green is-circle is-large is-add-button" href="/Admin/add_producto"><span class="material-icons g-icon g-is-3">save</span></button>
-</form>
-          <form method="POST" action="/Producto_stock/{{product.id}}">
-            <input type="number" value="0" id="add_input" name="added" hidden>
-            <input type="hidden" name="receta" value="{{jreceta}}">
-            <button class="button is-orange" id="submit" disabled>Agregar</button>
-            <a class="button is-danger" href="/Producto/{{product.id}}">Reiniciar</a>
-          </form>
-        </div>
       </div>
     </div>
+</form>
+
+<div class="box">
+  <h2 class="subtitle">Agregar producto (Actual: {{product.inventario[0].stock}})</h2>
+  <div class="field is-grouped">
+    <div class="control">
+      <button class="button is-danger" onclick="add(-10)">10 -</button>
+    </div>
+    <div class="control">
+      <button class="button is-danger" onclick="add(-1)">-</button>
+    </div>
+    <div class="control">
+      <label class="label" id="add_label">0</label>
+    </div>
+    <div class="control">
+      <button class="button is-success" onclick="add(1)">+</button>
+    </div>
+    <div class="control">
+      <button class="button is-success" onclick="add(10)">+ 10</button>
+    </div>
+  </div>
+
+  <form method="POST" action="/Producto_stock/{{product.id}}">
+    <input type="number" value="0" id="add_input" name="added" hidden>
+    <input type="hidden" name="receta" value="{{jreceta}}">
+    <button class="button is-orange" id="sbt" disabled>Agregar</button>
+    <a class="button is-danger" href="/Producto/{{product.id}}">Reiniciar</a>
+  </form>
+</div>
+
     <hr>
     <h1 class="title is-4">Ingredientes</h1>
       <table class="table is-fullwidth">
@@ -87,7 +91,10 @@
       <button type="submit" class="button is-orange">Guardar Receta</button>
       </form>
 
-</form>
+      {% if current_user.roles[0].name == 'admin'%}
+        <button onclick="activate()" class="button is-danger is-circle is-large is-add-button" style="bottom: 9rem;"><span class="material-icons g-icon g-is-3">delete</span></button>
+      {% endif %}
+
   </section>
   
   <script>
@@ -95,7 +102,7 @@
 
     const label = document.getElementById('add_label')
     const input = document.getElementById('add_input')
-    const btn = document.getElementById('submit')
+    const btn = document.getElementById('sbt')
 
     function add(times){
         agregado += times;

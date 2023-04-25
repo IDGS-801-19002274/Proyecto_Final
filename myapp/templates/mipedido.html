@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{%block normal_content%}
+{% include 'delete_element_confirm.html' %}
+<div class="content">
+    <div class="container" style="margin-top: 3rem;">
+        <section class="section card">
+            <div class="container">
+              <h1 class="title">Pedido #{{pedido.id}} - {{current_user.name}}</h1>
+              <hr>
+              <div class="">
+                {% for producto in productos %}
+                <p>{{producto.producto.nombre}} ({{producto.cantidad}}pz)</p>
+                <p>$ {{(producto.producto.precio_menudeo * producto.cantidad)}}</p>
+                {% endfor %}
+        
+                  <h3>Total:</h3> <h2>${{total}}</h2>
+              </div>
+            </div>
+          </section>
+    </div>
+
+    <section class="section">
+        <div class="container">
+          <h1 class="title is-3">Comentarios</h1>
+          <hr>
+          <!-- Aquí irían los comentarios -->
+          {% for comentario in comentarios %}
+          <div class="box">
+            <article class="media">
+              <div class="media-content">
+                <div class="">
+                  <p>
+                    <br>
+                    {{comentario.comentario}}
+                    <br>
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+          {% endfor %}
+    
+        </div>
+      </section>
+</div>
+
+<script>
+    text.textContent = '¿Estás seguro que deseas cancelar este pedido?'
+</script>
+{%endblock%}

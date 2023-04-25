@@ -15,30 +15,81 @@
           <hr>
       </div>
       {% if pedido.status == 'pendiente' or pedido.status == 'enviado' %}
-      <h2 class="subtitle">Estado del pedido:</h2>
-      <div class="buttons has-addons">
-        <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
-          <input type="hidden" name="status" value="pendiente">
-          <button class="button {{'is-warning' if pedido.status == 'pendiente' else ''}}">Pendiente</button>
-        </form>
-        <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
-          <input type="hidden" name="status" value="enviado">
-          <button class="button {{'is-info' if pedido.status == 'enviado' else ''}}">Enviado</button>
-        </form>
-        <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id"> 
-          <input type="hidden" name="status" value="entregado">
-          <button class="button">Entregado</button>
-        </form>
+        {% if cancelled == False %}
+        <h2 class="subtitle">Estado del pedido:</h2>
+        <div class="buttons has-addons">
+          <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
+            <input type="hidden" name="status" value="pendiente">
+            <button class="button {{'is-warning' if pedido.status == 'pendiente' else ''}}">Pendiente</button>
+          </form>
+          <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
+            <input type="hidden" name="status" value="enviado">
+            <button class="button {{'is-info' if pedido.status == 'enviado' else ''}}">Enviado</button>
+          </form>
+          <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id"> 
+            <input type="hidden" name="status" value="entregado">
+            <button class="button">Entregado</button>
+          </form>
+          <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
+            <input type="hidden" name="status" value="cancelado">
+            <button class="button">Cancelado</button>
+          </form>
+        </div>
+        {% else %}
         <form method="POST" action="/Pedido/editar"> <input type="hidden" value="{{pedido.id}}" name="id">
           <input type="hidden" name="status" value="cancelado">
-          <button class="button">Cancelado</button>
+          <button class="button">Cancelar Pedido</button>
         </form>
-      </div>
+        {% endif %}
       {% elif pedido.status == 'entregado' %}
-      <h1 class="subtitle has-text-green">Pedido Entregado y Completado</h1>
+        <h1 class="subtitle has-text-green">Pedido Entregado y Completado</h1>
       {% else %}
-      <h1 class="subtitle has-text-danger">Pedido Cancelado</h1>
+        <h1 class="subtitle has-text-danger">Pedido Cancelado</h1>
       {% endif %}
     </div>
   </section>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Agregar Comentario</h1>
+      <form method="POST" action="/add_comentario/{{pedido.id}}" class="box">
+        <div class="field">
+          <label class="label">Comentario</label>
+          <div class="control">
+            <textarea name="comentario" class="textarea" placeholder="Escribe tu comentario aquí"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <button type="submit" class="button is-primary">Enviar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title is-3">Comentarios</h1>
+      <hr>
+      <!-- Aquí irían los comentarios -->
+      {% for comentario in comentarios %}
+      <div class="box">
+        <article class="media">
+          <div class="media-content">
+            <div class="">
+              <p>
+                <br>
+                {{comentario.comentario}}
+                <br>
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+      {% endfor %}
+
+    </div>
+  </section>
+  
 {%endblock%}

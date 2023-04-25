@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{%block normal_content%}
+<div class="content" style="margin-top:4.5rem;">
+    <div class="container">
+        {% for pedido in pedidos %}
+            <div class="card" style="margin-bottom: 2rem;">
+            <div class="card-content">
+                <div class="is-flex is-align-items-center">
+                <p class="title is-4 mr-2">Pedido #{{pedido.id}}</p>
+                <p class="subtitle is-6">Para: {{current_user.name}}</p>
+                </div>
+                <p>Dirección: {{current_user.direccion}}</p>
+                <hr>
+                <div class="is-flex is-align-items-center">
+                <h3 class="mr-auto">Estado: {{pedido.status}}</h3>
+                <div class="buttons">
+                    <a class="has-text-orange ml-auto" href="/mi_pedido/{{pedido.id}}"><span class="material-icons g-icon g-is-3">arrow_forward_ios</span></a>
+                </div>
+                </div>
+            </div>
+            </div>
+
+        {% endfor %}
+    </div>
+</div>
+{%include 'footer.html'%} 
+{%endblock%}

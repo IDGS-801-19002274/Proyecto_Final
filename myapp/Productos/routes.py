@@ -3,7 +3,8 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from Productos.converter import convert_Inputs, convert_Objects
 import os, json
-from models import db, Producto, Proveedor, Ingrediente, InventarioIngredientes, InventarioProductos, Gramaje
+from models import db, Producto, Proveedor, Ingrediente, InventarioIngredientes, InventarioProductos, Gramaje, Log
+from datetime import datetime
 from my_decorator import role_required
 
 Productos = Blueprint('Productos', __name__)
@@ -24,11 +25,19 @@ def get_Productos():
 @login_required
 @role_required('admin', 'visor')
 def get_Producto(id):
+    error = False
     product = Producto.query.filter_by(id=id).first()
     receta = convert_Objects(product.receta)
     jreceta = json.dumps(receta)
     ingredientes = Ingrediente.query.all()
-    return render_template('product_data.html', name = 'Producto', type = 'lateral', product = product, receta = receta, jreceta = jreceta, ingredientes = ingredientes, ing = len(receta))
+    
+    for r in receta:
+        if r['id'] == 'ERROR':
+            error = True
+    
+    if error:
+        flash('Algunos ingredientes han sido eliminados, se recomienda revisar la receta y corregir')
+    return render_template('product_data.html', name = 'Producto', type = 'lateral', product = product, receta = receta, jreceta = jreceta, ingredientes = ingredientes, ing = len(receta), delete_route = ('/DeleteProducto/' + str(product.id)))
 
 #Vista que permite agregar productos
 @Productos.route('/Admin/add_productos', methods=['GET', 'POST'])
@@ -72,6 +81,15 @@ def add_producto():
         inventario = InventarioProductos(stock=0.0, producto=prod)
         prod.inventario = [inventario]
 
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha agregado el producto: ' + prod.nombre +  ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+
+        db.session.add(log)
+
         db.session.add(prod)
         db.session.commit()
 
@@ -84,7 +102,7 @@ def add_producto():
 #Edita info general de productos
 @Productos.route('/Editproduct/<int:id>', methods=['POST'])
 @login_required
-@role_required('admin')
+@role_required('admin', 'visor')
 def edit_product(id):
     try:
         producto = Producto.query.get(id)
@@ -99,6 +117,15 @@ def edit_product(id):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             producto.url_photo = ('../static/img/upload/' + filename)
+        
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha editado la información del producto: ' + producto.nombre +  ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+
+        db.session.add(log)
         
         db.session.commit()
         flash('Se han guardado con éxito los cambios!')
@@ -119,11 +146,52 @@ def edit_recipe(id):
     else:
         try:
             producto.receta = new_receta
+            
+            ahora = datetime.now()
+            fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+            log = Log(
+                log = (current_user.name + ' ha editado la receta del producto: ' + producto.nombre +  ' - ' + fecha_hora),
+                usuario_id = current_user.id
+            )
+
+            db.session.add(log)
+            
             db.session.commit()
             flash ('La receta ha sido cambiada con exito')
         except:
             flash('Ha ocurrido un error')
         
+    return redirect(url_for('Productos.get_Productos'))
+
+#Elimina productos
+@Productos.route('/DeleteProducto/<int:id>', methods=['POST'])
+@login_required
+@role_required('admin')
+def deleteProducto(id):
+    try:
+        producto = Producto.query.get(id)
+
+        # Eliminar primero de la tabla inventario_ingredientes
+        inventario = InventarioProductos.query.filter_by(producto_id=id).first()
+        if inventario:
+            db.session.delete(inventario)
+
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha eliminado: ' + producto.nombre +  ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+
+        db.session.add(log)
+        
+        db.session.delete(producto)
+        db.session.commit()
+
+        flash('Se ha eliminado el elemento, asegurese de cancelar los pedidos que puedan contener este elemento')
+    except:
+        flash('Ha ocurrido un error')
+
     return redirect(url_for('Productos.get_Productos'))
     
 #INGREDIENTES-------------------------------------------------------
@@ -133,17 +201,24 @@ def edit_recipe(id):
 @role_required('admin', 'visor')
 def get_Ingredientes():
     ingredients = Ingrediente.query.all()
+    error = False
     r_i = []
     for ingredient in ingredients:
         inventario = ingredient.inventario[0]
+        prov = Proveedor.query.filter_by(id=ingredient.proveedor_id).first()
+        if not prov:
+            error = True
         r_i.append({
             "id" : ingredient.id,
             "nombre" : ingredient.nombre,
             "stock" : inventario.stock,
-            "proveedor" : Proveedor.query.filter_by(id=ingredient.proveedor_id).first(),
+            "proveedor" : prov,
             "precio" : ingredient.precio,
-            "gramaje" : ingredient.gramaje.uni_larga
+            "gramaje" : ingredient.gramaje.uni_larga,
         })
+    
+    if error:
+        flash('Hay elementos con valores erroneos, favor de corregirlos')
         
     return render_template('ingredients.html', name = 'Ingredientes', type = 'lateral', ingredients = r_i)
 
@@ -178,6 +253,15 @@ def add_ingrediente():
 
     try:
         db.session.add(ingr)
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha agregado el ingrediente: ' + ingr.nombre +  ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+
+        db.session.add(log)
+        
         db.session.commit()
     except:
         flash('Error al insertar en la base de datos. Por favor, revise que los datos sean correctos y vuelva a intentar.')
@@ -194,6 +278,16 @@ def add_ingrediente_stock():
     stock = request.form.get('ammount')
     
     ingr.inventario[0].stock += (float(stock) * 1000)
+    
+    ahora = datetime.now()
+    fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+    log = Log(
+        log = (current_user.name + ' ha agregado stock al ingrediente: ' + ingr.nombre + ' una cantidad de ' + str(float(stock) * 1000) +  ' - ' + fecha_hora),
+        usuario_id = current_user.id
+    )
+
+    db.session.add(log)
+    
     db.session.commit()
     return redirect(url_for('Productos.get_Ingredientes'))
 
@@ -219,10 +313,9 @@ def edit_ingrediente(id):
     nombre = request.form.get('nombre')
     prov = request.form.get('provider')
     precio = request.form.get('precio')
-    gramaje = request.form.get('gramaje')
     
     # Validar que los campos no estén vacíos
-    if not nombre or not prov or not precio or not gramaje:
+    if not nombre or not prov or not precio:
         flash('Todos los campos son requeridos')
         return redirect(url_for('Productos.get_Ingredientes'))
     
@@ -235,21 +328,50 @@ def edit_ingrediente(id):
     ingrediente.proveedor_id = prov
     ingrediente.precio = precio
     
+    ahora = datetime.now()
+    fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+    log = Log(
+        log = (current_user.name + ' ha agregado actualizado el ingrediente: ' + ingrediente.nombre + ' - ' + fecha_hora),
+        usuario_id = current_user.id
+    )
+
+    db.session.add(log)
+    
     db.session.commit()
     
     return redirect(url_for('Productos.get_Ingredientes'))
 
-#Elimina los ingredientes
+# Elimina los ingredientes
 @Productos.route('/DeleteIngrediente/<int:id>', methods=['POST'])
 @login_required
 @role_required('admin')
 def delete_ingrediente(id):
-    ingrediente = Ingrediente.query.get(id)
-    db.session.delete(ingrediente)
-    db.session.commit()
-    flash('Se ha eliminado el elemento, asegurese de editar las recetas que puedan contener este elemento')
-    
+    try:
+        ingrediente = Ingrediente.query.get(id)
+
+        # Eliminar primero de la tabla inventario_ingredientes
+        inventario = InventarioIngredientes.query.filter_by(ingrediente_id=id).first()
+        if inventario:
+            db.session.delete(inventario)
+
+        db.session.delete(ingrediente)
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha eliminado al ingrediente: ' + ingrediente.nombre + ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+
+        db.session.add(log)
+        
+        db.session.commit()
+
+        flash('Se ha eliminado el elemento, asegurese de editar las recetas que puedan contener este elemento')
+    except:
+        flash('Ha ocurrido un error')
+
     return redirect(url_for('Productos.get_Ingredientes'))
+
 
 
 #GRAMAJE---------------------------------------------------------------
@@ -275,6 +397,15 @@ def gramaje_add():
         uni_mini = umi,
         uni_larga = ula
     )
+    
+    ahora = datetime.now()
+    fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+    log = Log(
+        log = (current_user.name + ' ha agregado el gramaje: ' + gramaje.uni_larga + ' - ' + fecha_hora),
+        usuario_id = current_user.id
+    )
+
+    db.session.add(log)
     
     db.session.add(gramaje)
     db.session.commit()
@@ -302,6 +433,15 @@ def add_producto_stock(id):
             ingr.inventario[0].stock -= total_add
         
         prod.inventario[0].stock += stock
+        
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha agregado stock al producto: ' + prod.nombre + ' una cantidad de: ' + str(stock) + ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+
+        db.session.add(log)
         
         db.session.commit()
     except:

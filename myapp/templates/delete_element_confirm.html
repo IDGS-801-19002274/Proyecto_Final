@@ -5,8 +5,8 @@
             <div class="field is-grouped">
               
             </div>
-            <form method="POST" action="{{delete_route}}">
-                <p class="has-text-weight-bold">¿Estás seguro que deseas eliminar este elemento?</p>
+            <form method="POST" action="{{delete_route}}" id="form">
+                <p class="has-text-weight-bold" id="text">¿Estás seguro que deseas eliminar este elemento?</p>
                 <button id="submit" class="button is-orange" type="submit">Eliminar</button>
                 <a class="button is-danger" onclick="location.reload(); return false">Cancelar</a>
             </form>
@@ -17,7 +17,15 @@
 
 <script>
     const noti = document.getElementById('alert')
+    const form = document.getElementById('form')
+    const text = document.getElementById('text')
+    const del_route = '{{delete_route}}'
     function activate(){
         noti.classList.add('alert-active')
       }
+
+      function activatewid(id){
+        noti.classList.add('alert-active');
+        form.action = (del_route + id);
+        }
 </script>

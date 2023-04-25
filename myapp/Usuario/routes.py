@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from models import User, Role, user_roles, db
+from models import User, Role, user_roles, db, Log
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime
 from my_decorator import logout_required
 
 Usuario = Blueprint('Usuario', __name__)
@@ -31,6 +32,15 @@ def login():
     #Si llegamos aqui, el usuario tiene datos correctos 
     #creamos una session y logueamos al usuario.
     login_user(user, remember=remember)
+    ahora = datetime.now()
+    fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+    log = Log(
+        log = (current_user.name + ' ha iniciado sesión ' + ' - ' + fecha_hora),
+        usuario_id = current_user.id
+    )
+
+    db.session.add(log)
+    db.session.commit()
     return redirect(url_for('Tienda.index'))
 
 
@@ -72,6 +82,16 @@ def register():
         new_user.roles.append(client_role)
 
         db.session.add(new_user)
+        
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (new_user.name + ' se ha registrado ' + ' - ' + fecha_hora),
+            usuario_id = -1
+        )
+        
+        db.session.add(log)
+        
         db.session.commit()
         
         return redirect(url_for('Usuario.show_login'))
@@ -84,7 +104,15 @@ def register():
 @Usuario.route('/Usuario/logout', methods=['GET'])
 @login_required
 def logout():
+    ahora = datetime.now()
+    fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+    log = Log(
+        log = (current_user.name + ' ha cerrado sesión ' + ' - ' + fecha_hora),
+        usuario_id = current_user.id
+    )
+    db.session.add(log)
     logout_user()
+    db.session.commit()
     return redirect(url_for('Usuario.show_login'))
 
 #ADMIN_VIEW-------------------------------------------------------------------
@@ -94,7 +122,7 @@ def logout():
 def show_usuarios():
     users = User.query.all()
     roles = Role.query.all()
-    return render_template('usuarios.html', name = 'Usuarios', type = 'lateral', users = users, roles = roles)
+    return render_template('usuarios.html', name = 'Usuarios', type = 'lateral', users = users, roles = roles, delete_route = '/DeleteUser/')
 
 #Modifica el rango de un usuario
 @Usuario.route('/Admin/usuarios_update', methods=['POST'])
@@ -108,6 +136,16 @@ def range_usuarios():
     if new_role != user.roles[0]:
         user.roles.remove(user.roles[0])
         user.roles.append(new_role)
+        
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha modificado el rango de: ' + user.name + ', ahora es ' + new_role.name + ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+        
+        db.session.add(log)
+        
         db.session.commit()
     else:
         flash('No se han realizado cambios')
@@ -119,7 +157,15 @@ def range_usuarios():
 @login_required
 def deleteuser(id):
     user = User.query.get(id)
+    ahora = datetime.now()
+    fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+    log = Log(
+        log = (current_user.name + ' ha eliminado a ' + user.name + ' - ' + fecha_hora),
+        usuario_id = current_user.id
+    )
     db.session.delete(user)
+    db.session.add(log)
+    
     db.session.commit()
     flash('El usuario ha sido eliminado correctamente')
     return redirect(url_for('Usuario.show_usuarios'))

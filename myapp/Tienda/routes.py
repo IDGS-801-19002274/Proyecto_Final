@@ -1,9 +1,11 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
-from models import db, Producto, Pedido
+from models import db, Producto, Pedido, ComentariosCancelados, Log
 import random, json
 from my_decorator import role_required
 from flask_login import login_required, current_user
 from Productos.converter import convert_carrito_Inputs
+from datetime import datetime
+from Productos.converter import convert_Pedido
 
 Tienda = Blueprint('Tienda', __name__)
 
@@ -68,6 +70,16 @@ def pago():
         )
     
         db.session.add(new_pedido)
+        
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha dado de alta un pedido' + ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+
+        db.session.add(log)
+        
         db.session.commit()
         
         return redirect(url_for('Tienda.borrarLS'))
@@ -85,3 +97,32 @@ def borrarLS():
 def add_carrito():
     flash ('Se ha agregado correctamente el producto a su carrito :)')
     return redirect(url_for('Tienda.products'))
+
+@Tienda.route('/mis_pedidos', methods=['GET'])
+@login_required
+def show_mispedidos():
+    ped = Pedido.query.filter(Pedido.cliente_id == current_user.id).order_by(
+            (Pedido.status == 'pendiente').desc(),
+            (Pedido.status == 'enviado').desc(),
+            (Pedido.status == 'entregado').desc(),
+            (Pedido.status == 'cancelado').desc(),
+            Pedido.id.desc()
+        ).all()
+    return render_template('mispedidos.html', name='Mis pedidos', type='header', pedidos = ped)
+
+@Tienda.route('/mi_pedido/<int:id>', methods=['GET'])
+@login_required
+def show_mipedido(id):
+    ped = Pedido.query.get(id)
+    productos = convert_Pedido(ped.productos)
+    true_Productos = []
+    
+    for producto in productos['productos']:
+        if producto['erroa'] == 'ERROR':
+            flash('El siguiente pedido contiene productos eliminados que se han retirado de la lista')
+        else:
+            true_Productos.append(producto)
+    
+    comentarios = ComentariosCancelados.query.filter_by(id_pedido=id).order_by(ComentariosCancelados.id.desc()).all()
+    
+    return render_template('mipedido.html', name='Mis pedidos', type='header', pedido = ped, productos = true_Productos, total = productos['total'], comentarios = comentarios)

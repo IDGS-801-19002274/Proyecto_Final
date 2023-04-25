@@ -13,9 +13,9 @@
       </tr>
     </thead>
     <tbody>
-    {% for n in range(25) %}
+    {% for log in logs %}
       <tr>
-        <td>Log #{{n}}</td>
+        <td>{{log.log}}</td>
       </tr>
       {% endfor %}
     </tbody>

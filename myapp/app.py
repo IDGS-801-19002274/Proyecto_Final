@@ -59,4 +59,4 @@ if __name__ =='__main__':
         db.create_all()
     login_manager.login_view = 'Usuario.show_login'
     login_manager.login_message = "Por favor inicie sesión para acceder a esta página"
-    app.run()
+    app.run(port='3000')

@@ -100,8 +100,7 @@ class InventarioProductos(db.Model):
     producto = relationship('Producto', uselist=False, backref='inventario')
 
 class ComentariosCancelados(db.Model):
-    __tablename__ = 'comentarios_cancelados'
+    __tablename__ = 'comentarios'
     id = db.Column(db.Integer, primary_key=True)
-    id_pedido = db.Column(db.Integer, db.ForeignKey('pedidos.id'), unique=True, nullable=False)
+    id_pedido = db.Column(db.Integer, nullable=False)
     comentario = db.Column(db.Text, nullable=False)
-    pedido = relationship('Pedido', backref='comentario_cancelado')

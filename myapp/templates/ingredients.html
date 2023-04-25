@@ -10,7 +10,9 @@
         <th>Proveedor</th>
         <th>Costo</th>
         <th></th>
-        <th></th>
+        {% if current_user.roles[0].name == 'admin'%}
+          <th></th>
+        {% endif %}
         <th></th>
       </tr>
     </thead>
@@ -22,13 +24,18 @@
         <td>{{ingredient.proveedor.nombre}}</td>
         <td>${{ingredient.precio}}</td>
         <td><button class="nostyle has-text-orange" onclick="activate({{ingredient.id}})"><span class="material-icons g-icon g-is-2">add</span></button></td>
+        
         <td><a class="has-text-warning-dark" href="/Ingrediente/{{ingredient.id}}"><span class="material-icons g-icon g-is-2">edit</span></a></td>
-        <td><p class="has-text-danger"><span class="material-icons g-icon g-is-2">sentiment_dissatisfied</span></i></p></td>
+        <td><p class="{% if ingredient.stock < 1000 %}has-text-danger{% else %}has-text-success{% endif %}"><span class="material-icons g-icon g-is-2">
+          {% if ingredient.stock < 1000 %}sentiment_dissatisfied{% else %}sentiment_very_satisfied{% endif %}
+        </span></i></p></td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  <a class="button is-orange is-circle is-large is-add-button" href="/Admin/add_ingrediente"><span class="material-icons g-icon g-is-3">add</span></a>
+  {% if current_user.roles[0].name == 'admin'%}
+    <a class="button is-orange is-circle is-large is-add-button" href="/Admin/add_ingrediente"><span class="material-icons g-icon g-is-3">add</span></a>
+  {% endif %}
 
 <script>
   const noti = document.getElementById('alert')

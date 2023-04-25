@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import current_app, redirect, url_for, abort
+from flask import current_app, redirect, url_for, abort, flash
 from flask_login import current_user
 
 def logout_required(func):
@@ -17,7 +17,8 @@ def role_required(*roles):
             if not current_user.is_authenticated:
                 return current_app.login_manager.unauthorized()
             if not any(r.name in roles for r in current_user.roles):
-                abort(403)  # Forbidden
+                flash('No tienes permiso para acceder a esta página', 'error')
+                return redirect(url_for('Productos.get_Productos'))
             return func(*args, **kwargs)
         return decorated_view
     return decorator

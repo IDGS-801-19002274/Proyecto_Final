@@ -17,6 +17,10 @@
     transition: 0.3s;
 }
 
+p{
+    font-weight: bold !important;
+}
+
 footer ul{color: white; font-weight: bold;}
 footer p{color : white;}
 footer ul li a{text-decoration: none; color: var(--soft-orange)!important;}
@@ -223,12 +227,14 @@ nav.is-orange-transparent .navbar-item:hover{color: white !important; font-size:
     justify-content: center;
     align-items: center;
     opacity: 0;
+    pointer-events: none;
 }
 
 .alert-active{
     height: 100vh;
     left: 0; right: 0;
     opacity: 1 !important;
+    pointer-events: auto;
 }
 
 .alert .work_space{
@@ -251,7 +257,7 @@ nav.is-orange-transparent .navbar-item:hover{color: white !important; font-size:
     min-width: 250px;
     max-width: 300px;
     min-height: 50px;
-    background-color: var(--red-transparent);
+    background-color: var(--soft-orange-transparent);
     z-index: 9999999999;
     right: 3%;
     top : 10%;

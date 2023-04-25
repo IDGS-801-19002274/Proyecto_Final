@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+{% include 'delete_element_confirm.html' %}
+<div class="container">
+  <div class="columns is-centered">
+    <div class="column is-half">
+      <form method="post" enctype="multipart/form-data">
+        <div class="field">
+          <label class="label">Nombre</label>
+          <div class="control">
+            <input class="input" type="text" name="nombre" value="{{ proveedor.nombre }}" required>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Imagen</label>
+          <div class="file has-name">
+              <input type="file" name="imagen" id="img-input">
+          </div>
+          <div class="field">
+            <img id="img-preview" src="{{ proveedor.url_photo }}" alt="{{ proveedor.nombre }}" class="image is-128x128">
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Descripción</label>
+          <div class="control">
+            <textarea class="textarea" name="descripcion">{{ proveedor.descripcion }}</textarea>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Dirección</label>
+          <div class="control">
+            <input class="input" type="text" name="direccion" value="{{ proveedor.direccion }}" required>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Teléfono</label>
+          <div class="control">
+            <input class="input" type="tel" name="telefono" value="{{ proveedor.telefono }}" required>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Dueño</label>
+          <div class="control">
+            <input class="input" type="text" name="dueno" value="{{ proveedor.jefe }}" required>
+          </div>
+        </div>
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-orange">Guardar</button>
+          </div>
+          <div class="control">
+            <a href="Admin/proveedores" class="button is-light">Cancelar</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<button onclick="activate()" class="button is-danger is-circle is-large is-add-button"><span class="material-icons g-icon g-is-3">delete</span></button>
+
+
+<script>
+    const imgInput = document.getElementById('img-input');
+    const imgPreview = document.getElementById('img-preview');
+
+    imgInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      
+      if (file) {
+        const reader = new FileReader();
+        
+        reader.addEventListener('load', (event) => {
+          imgPreview.src = event.target.result;
+        });
+        
+        reader.readAsDataURL(file);
+      }
+    });
+</script>
+{% endblock %}

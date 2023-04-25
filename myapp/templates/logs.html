@@ -8,9 +8,9 @@
       </tr>
     </thead>
     <tbody>
-    {% for n in range(25) %}
+    {% for log in logs %}
       <tr>
-        <td><a>Descripcion de Log #{{n}}</a></td>
+        <td><a>{{log.log}}</a></td>
       </tr>
       {% endfor %}
     </tbody>
