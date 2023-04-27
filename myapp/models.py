@@ -104,3 +104,10 @@ class ComentariosCancelados(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_pedido = db.Column(db.Integer, nullable=False)
     comentario = db.Column(db.Text, nullable=False)
+
+class ComentariosProductos(db.Model):
+    __tablename__ = 'comentarios_productos'
+    id = db.Column(db.Integer, primary_key=True)
+    id_producto = db.Column(db.Integer, nullable=False)
+    id_usuario = db.Column(db.Integer, nullable=False)
+    comentario = db.Column(db.Text, nullable=False)

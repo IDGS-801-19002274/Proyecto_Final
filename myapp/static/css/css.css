@@ -179,7 +179,6 @@ nav.is-orange-transparent .navbar-item:hover{color: white !important; font-size:
 .lateral-bar .lbody ul .active:hover{background-color: var(--soft-green); padding-top: 0.7rem; padding-bottom: 0.7rem;}
 .lateral-bar .lbody ul .active:hover a{color: white;}
 .lateral-bar .lbody ul .active a{color: var(--green); font-size: 1.5rem;}
-
 .products-section figure{margin: 0 !important;}
 .products-section img{min-width: 14.5rem !important; max-width: 14.5rem !important; min-height: 10rem !important; max-height: 10rem !important; object-fit: cover;}
 

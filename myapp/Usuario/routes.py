@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 from my_decorator import logout_required
+from my_decorator import role_required
 
 Usuario = Blueprint('Usuario', __name__)
 
@@ -155,6 +156,7 @@ def range_usuarios():
 #Elimina usuarios
 @Usuario.route('/DeleteUser/<int:id>', methods=['POST'])
 @login_required
+@role_required('admin')
 def deleteuser(id):
     user = User.query.get(id)
     ahora = datetime.now()
@@ -170,6 +172,58 @@ def deleteuser(id):
     flash('El usuario ha sido eliminado correctamente')
     return redirect(url_for('Usuario.show_usuarios'))
     
+#REGISTRAR UN NUEVO ADMIN O MOD
+@Usuario.route('/CreateAdmin', methods=['GET'])
+@login_required
+@role_required('admin')
+def show_Createadmin():
+    roles = Role.query.all()
+    return render_template('createadmin.html', name = 'Crear Admin', type = 'lateral', roles = roles)
 
-    
-    
+#REGISTRA ESTE NUEVO ADMIN
+@Usuario.route('/CreateAdmin/create', methods=['POST'])
+@login_required
+@role_required('admin')
+def Createadmin():
+    try:
+        direccion = request.form.get('address')
+        email = request.form.get('email')
+        nombre = request.form.get('full_name')
+        password = request.form.get('password')
+        telefono = request.form.get('phone')
+        cp = request.form.get('postal_code')
+        rango = request.form.get('rango')
+        
+        user = User.query.filter_by(email=email).first()
+        if user: #Si se encontro un usuario, redireccionamos de regreso a la pagina de registro
+                flash('Ese correo electronico ya existe')
+                return redirect(url_for('Usuario.show_Createadmin'))
+        
+        new_user = User(
+                name = nombre,
+                email = email,
+                password = generate_password_hash(password, method='sha256'),
+                direccion = direccion,
+                telefono = telefono,
+                cp = cp)
+
+        client_role = Role.query.filter_by(id=int(rango)).first()
+        new_user.roles.append(client_role)
+
+        db.session.add(new_user)
+        
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (new_user.name + ' se ha registrado ' + ' - ' + fecha_hora),
+            usuario_id = -1
+        )
+        
+        db.session.add(log)
+        
+        flash('Se ha dado de alta al usuario')
+        
+        db.session.commit()
+    except:
+        flash('Ha ocurrido un error')
+    return redirect(url_for('Usuario.show_Createadmin'))

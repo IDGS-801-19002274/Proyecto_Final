@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{%block l_content%}
+<form action="/CreateAdmin/create" method="POST">
+    <div class="field">
+      <label class="label">Nombre completo</label>
+      <div class="control">
+        <input class="input" type="text" placeholder="Nombre completo" name="full_name">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Correo electrónico</label>
+      <div class="control">
+        <input class="input" type="email" placeholder="Correo electrónico" name="email">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Contraseña</label>
+      <div class="control">
+        <input class="input" type="password" placeholder="Contraseña" name="password">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Dirección</label>
+      <div class="control">
+        <input class="input" type="text" placeholder="Dirección" name="address">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Teléfono</label>
+      <div class="control">
+        <input class="input" type="tel" placeholder="Teléfono" name="phone">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Código postal</label>
+      <div class="control">
+        <input class="input" type="number" placeholder="Código postal" name="postal_code">
+      </div>
+    </div>
+    <div class="field">
+        <label class="label">Rango</label>
+        <div class="select">
+            <select name="rango">
+                {% for role in roles %}
+                <option value="{{role.id}}">{{role.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="field is-grouped">
+        <br>
+      <div class="control">
+        <button class="button is-link" type="submit">Registrarse</button>
+      </div>
+      <div class="control">
+        <a class="button is-danger" href="/Admin/usuarios" type="reset">Cancelar</a>
+      </div>
+    </div>
+  </form>
+  
+{%endblock%}

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
-from models import db, Producto, Pedido, ComentariosCancelados, Log
+from models import db, Producto, Pedido, ComentariosCancelados, Log, ComentariosProductos, User
 import random, json
 from my_decorator import role_required
 from flask_login import login_required, current_user
@@ -27,16 +27,60 @@ def nosotros():
 def contacto():
     return render_template('contacto.html', name = 'Contacto', type = 'header')
 
+#Muestra todos los productos
 @Tienda.route('/Tienda/productos', methods=['GET'])
 def products():
     products = Producto.query.all()
     return render_template('productos.html', name = 'Productos', type = 'header', products = products)
 
+#Muestra un producto
 @Tienda.route('/TiendaProducto/<int:id>', methods=['GET'])
 def product(id):
     products = Producto.query.get(id)
     suggest = random.sample(Producto.query.all(), 4)
-    return render_template('producto.html', name = 'Productos', type = 'header', product = products, suggest = suggest)
+    commentario = ComentariosProductos.query.filter_by(id_producto=id).order_by(ComentariosProductos.id.desc()).all()
+    
+    comments = []
+    for coment in commentario:
+        comments.append({
+            'usuario' : User.query.get(coment.id_usuario),
+            'comentario' : coment.comentario
+        })
+    
+    return render_template('producto.html', name = 'Productos', type = 'header', product = products, suggest = suggest, comments = comments)
+
+#Sube un comentario
+@Tienda.route('/Subircomentario', methods=['POST'])
+@login_required
+def subircomentario():
+    try:
+        id_producto = request.form.get('producto')
+        comentario = request.form.get('comentario')
+        id_usuario = current_user.id
+        
+        comment = ComentariosProductos(
+            id_producto = id_producto,
+            id_usuario = id_usuario,
+            comentario = comentario
+        )
+        
+        db.session.add(comment)
+        
+        ahora = datetime.now()
+        fecha_hora = ahora.strftime('%d/%m/%Y %H:%M:%S')
+        log = Log(
+            log = (current_user.name + ' ha agregado un comentario en el producto id: ' + id_producto + ' "' + comentario +'"' + ' - ' + fecha_hora),
+            usuario_id = current_user.id
+        )
+
+        db.session.add(log)
+        
+        db.session.commit()
+        flash('Se ha agregado el producto con exito!')
+    except:
+        flash('Ha ocurrido un error...')
+        
+    return redirect('/TiendaProducto/'+id_producto)
 
 #Muestra el carrito de compra
 @Tienda.route('/Tienda/carrito', methods=['GET'])
